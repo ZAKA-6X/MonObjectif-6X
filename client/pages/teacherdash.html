@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tableau de bord Enseignant</title>
+    <link rel="stylesheet" href="../styles/teacher.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <span class="brand-icon">👨‍🏫</span>
+        <span class="brand-text">Espace Enseignant</span>
+      </div>
+      <div class="navbar-user">
+        <span class="welcome-text">Bienvenue, <span id="userName"></span></span>
+        <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Main Content Area -->
+      <div class="main-content">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+          <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="overview">
+              <span class="nav-text">Les Groupes</span>
+            </a>
+            <a href="#" class="nav-item" data-section="presentations">
+              <span class="nav-text">Présentations</span>
+            </a>
+          </nav>
+        </aside>
+
+        <!-- Content Sections -->
+        <main class="content-area">
+          <!-- Overview Section -->
+          <section id="overview-section" class="content-section active">
+            <div class="section-header">
+              <h2>📈 Vue d'ensemble</h2>
+              <p class="section-subtitle">Aperçu général de l'activité</p>
+            </div>
+            <div class="empty-state">
+              <div class="empty-icon">📊</div>
+              <h3>Tableau de bord en construction</h3>
+              <p>Les données seront affichées ici</p>
+            </div>
+          </section>
+
+          <!-- Groups Section -->
+          <section id="groups-section" class="content-section">
+            <div class="section-header">
+              <h2>👥 Gestion des Groupes</h2>
+              <button class="btn btn-primary">
+                <span>➕</span> Créer un groupe
+              </button>
+            </div>
+            <div class="empty-state">
+              <div class="empty-icon">👥</div>
+              <h3>Aucun groupe pour le moment</h3>
+              <p>Commencez par créer votre premier groupe</p>
+            </div>
+          </section>
+
+          <!-- Presentations Section -->
+          <section id="presentations-section" class="content-section">
+            <div class="section-header">
+              <h2>📊 Présentations actives</h2>
+              <div class="section-actions">
+                <button id="refreshActivePresBtn" class="btn btn-secondary">
+                  <span>🔄</span> Actualiser
+                </button>
+              </div>
+            </div>
+
+            <!-- container that JS will fill -->
+            <div id="activePresentationsList" class="cards-grid">
+              <div class="empty-state">
+                <div class="empty-icon">📊</div>
+                <h3>Aucune présentation active</h3>
+                <p>Les présentations actives apparaîtront ici</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Evaluations Section -->
+          <section id="evaluations-section" class="content-section">
+            <div class="section-header">
+              <h2>✏️ Évaluations</h2>
+              <p class="section-subtitle">Gérer les feedbacks et notes</p>
+            </div>
+            <div class="empty-state">
+              <div class="empty-icon">✏️</div>
+              <h3>Aucune évaluation en attente</h3>
+              <p>Les présentations à évaluer seront listées ici</p>
+            </div>
+          </section>
+
+          <!-- Students Section -->
+          <section id="students-section" class="content-section">
+            <div class="section-header">
+              <h2>🎓 Étudiants</h2>
+              <div class="section-actions">
+                <input
+                  type="text"
+                  class="search-input"
+                  placeholder="🔍 Rechercher un étudiant..."
+                />
+              </div>
+            </div>
+            <div class="empty-state">
+              <div class="empty-icon">🎓</div>
+              <h3>Aucun étudiant inscrit</h3>
+              <p>La liste des étudiants apparaîtra ici</p>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Ajouter un Feedback</h3>
+          <span class="close" onclick="closeFeedbackModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+          <form id="feedbackForm">
+            <div class="form-group">
+              <label for="feedbackText">Votre feedback :</label>
+              <textarea id="feedbackText" name="feedback" rows="5" placeholder="Entrez votre feedback pour cette présentation..." required></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="closeFeedbackModal()">Annuler</button>
+              <button type="submit" class="btn btn-primary">Soumettre</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="../scripts/teacher.js"></script>
+  </body>
+</html>

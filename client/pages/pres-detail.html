@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Détails Présentation</title>
+    <link rel="stylesheet" href="../styles/pres-detail.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-brand">📚 Détails de la Présentation</div>
+      <div class="navbar-user">
+        <button class="back-btn" onclick="goBack()">← Retour</button>
+        <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+      <div id="loadingMessage" class="loading">Chargement...</div>
+      <div id="errorMessage" class="error-message" style="display: none"></div>
+
+      <div id="presentationDetails" style="display: none">
+        <!-- Presentation Header -->
+        <div class="pres-header">
+          <div class="pres-title-section">
+            <h1 id="presTitle"></h1>
+            <div id="descriptionDisplay">
+              <p id="presDescription" class="description"></p>
+              <button id="editDescriptionBtn" class="btn-edit" style="display: none" onclick="toggleDescriptionEdit()">
+                ✏️ Modifier
+              </button>
+            </div>
+            <div id="descriptionEditForm" style="display: none">
+              <textarea id="descriptionTextarea" rows="4" placeholder="Entrez la description..."></textarea>
+              <div class="edit-actions">
+                <button class="btn btn-primary" onclick="saveDescription()">💾 Enregistrer</button>
+                <button class="btn btn-secondary" onclick="cancelDescriptionEdit()">❌ Annuler</button>
+              </div>
+              <div id="descriptionMessage" class="description-message"></div>
+            </div>
+          </div>
+          <div class="pres-status" id="presStatus"></div>
+        </div>
+
+        <!-- Presentation Info Cards -->
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-icon">👥</div>
+            <div class="info-content">
+              <div class="info-label">Groupe</div>
+              <div class="info-value" id="groupName"></div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">📅</div>
+            <div class="info-content">
+              <div class="info-label">Date de téléchargement</div>
+              <div class="info-value" id="uploadDate"></div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">⭐</div>
+            <div class="info-content">
+              <div class="info-label">Points</div>
+              <div class="info-value" id="points"></div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">📄</div>
+            <div class="info-content">
+              <div class="info-label">Fichier</div>
+              <div class="info-value" id="fileName"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="feedback-section">
+          <h3>💬 Feedback</h3>
+          <div id="feedbackContent" class="feedback-content"></div>
+        </div>
+
+        <!-- Teacher Grading Section (only for teachers) -->
+<div id="teacherGradingSection" class="teacher-grading-section" style="display: none">
+  <h3>📝 Évaluation Enseignant</h3>
+  <form id="teacherGradingForm" class="teacher-grading-form">
+    <div class="form-group">
+      <label for="teacherNoteInput">Note (sur 20):</label>
+      <input
+        type="number"
+        id="teacherNoteInput"
+        min="0"
+        max="20"
+        step="0.5"
+        required
+        placeholder="Ex: 15"
+      />
+    </div>
+    <div class="form-group">
+      <label for="teacherFeedbackInput">Feedback:</label>
+      <textarea
+        id="teacherFeedbackInput"
+        rows="5"
+        placeholder="Entrez votre feedback..."
+        required
+      ></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">
+      ✅ Enregistrer l'évaluation
+    </button>
+  </form>
+  <div id="teacherGradingMessage" class="teacher-grading-message"></div>
+</div>
+        
+
+        <!-- Rating Section (only for other groups) -->
+        <div id="ratingSection" class="rating-section" style="display: none">
+          <h3>⭐ Évaluer cette présentation</h3>
+          <form id="ratingForm" class="rating-form">
+            <div class="rating-input-group">
+              <label for="ratingInput">Note (sur 20):</label>
+              <input
+                type="number"
+                id="ratingInput"
+                min="0"
+                max="20"
+                step="0.5"
+                required
+                placeholder="Ex: 15"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              ✅ Soumettre la note
+            </button>
+          </form>
+          <div id="ratingMessage" class="rating-message"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+          <!-- Upload Section (only for group members) -->
+          <div id="uploadSection" style="display: none">
+            <form id="uploadForm" class="upload-form">
+              <input type="file" id="pptFile" accept=".ppt,.pptx" required />
+              <button type="submit" class="btn btn-primary">
+                📤 Téléverser une présentation
+              </button>
+            </form>
+            <div id="uploadMessage" class="upload-message"></div>
+          </div>
+
+          <!-- Download Section (available for all users) -->
+          <div id="downloadSection" class="download-section">
+            <button class="btn btn-primary" onclick="downloadPresentation()">
+              📥 Télécharger la présentation
+            </button>
+          </div>
+
+          <!-- View-Only Note (for users from other groups) -->
+          <div id="viewOnlyNote" style="display: none">
+            <p class="view-only-note">
+              Vous pouvez télécharger cette présentation mais pas la modifier
+              (groupe différent)
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../scripts/pres-detail.js"></script>
+  </body>
+</html>

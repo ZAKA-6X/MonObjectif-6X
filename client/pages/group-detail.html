@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Détails du Groupe</title>
+    <link rel="stylesheet" href="../styles/teacher.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <span class="brand-icon">👥</span>
+        <span class="brand-text">Détails du Groupe</span>
+      </div>
+      <div class="navbar-user">
+        <span class="welcome-text">Bienvenue, <span id="userName"></span></span>
+        <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Main Content Area -->
+      <div class="main-content">
+        <!-- Group Info Section -->
+        <section id="group-info-section" class="content-section">
+          <div class="section-header">
+            <h2 id="groupTitle">Informations du Groupe</h2>
+            <button class="btn btn-secondary" onclick="goBack()">← Retour</button>
+          </div>
+          <div id="groupInfo" class="group-info-card">
+            <!-- Group info will be populated here -->
+          </div>
+        </section>
+
+        <!-- Members Section -->
+        <section id="members-section" class="content-section">
+          <div class="section-header">
+            <h2>👥 Membres du Groupe</h2>
+          </div>
+          <div id="membersList" class="members-grid">
+            <!-- Members will be populated here -->
+          </div>
+        </section>
+
+        <!-- Presentations Section -->
+          <section id="presentations-section" class="content-section">
+            <div class="section-header">
+              <h2>📋 Présentations du Groupe</h2>
+            </div>
+            <div id="presentationsList" class="cards-grid">
+              <!-- Presentations will be populated here -->
+            </div>
+          </section>
+
+      </div>
+    </div>
+
+    <script src="../scripts/group-detail.js"></script>
+  </body>
+</html>

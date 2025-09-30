@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="../styles/student.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">📚 Student Dashboard</div>
+    <ul class="navbar-menu">
+      <li class="active" onclick="switchTab('presentations')">Présentations</li>
+      <li onclick="switchTab('my-group')">Mon Groupe</li>
+      <li onclick="switchTab('my-presentations')">Mes Présentations</li>
+    </ul>
+    <div class="navbar-user">
+      <div class="user-info">
+        <div class="user-name" id="userName">Chargement...</div>
+        <div class="user-role">Étudiant</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Tab 1: All Active Presentations -->
+    <div id="presentations" class="tab-content active">
+      <h2>📋 Présentations Actives</h2>
+      <div id="presentationsList" class="cards-grid"></div>
+    </div>
+
+    <!-- Tab 2: My Group -->
+    <div id="my-group" class="tab-content">
+      <h2>👥 Mon Groupe</h2>
+      <div id="groupInfo"></div>
+    </div>
+
+    <!-- Tab 3: My Presentations -->
+    <div id="my-presentations" class="tab-content">
+      <h2>📁 Mes Présentations</h2>
+      <div id="myPresentationsList" class="cards-grid"></div>
+    </div>
+  </div>
+
+  <script src="../scripts/student.js"></script>
+</body>
+</html>
