@@ -144,14 +144,23 @@ function createGroupCard(group) {
       </div>
     </div>
     <div class="group-card-footer">
-      <button class="btn-link" onclick="viewGroupDetails('${group.id}')">
+      <a href="/pages/group-detail.html?groupId=${group.id}" 
+         class="btn-link group-open-link"
+         data-group-id="${group.id}">
         Voir les détails →
-      </button>
+      </a>
     </div>
   `;
 
+  // optional: also stash in localStorage for fallback
+  const openLink = card.querySelector(".group-open-link");
+  openLink.addEventListener("click", () => {
+    localStorage.setItem("currentGroupId", group.id);
+  });
+
   return card;
 }
+
 
 // Escape HTML to prevent XSS
 function escapeHtml(text) {

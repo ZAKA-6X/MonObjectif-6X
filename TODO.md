@@ -1,13 +1,8 @@
-# Fix Deconnection Button: Cannot GET /index.html
+# TODO: Fix Group ID Issue in Group Detail Page
 
-## Tasks
-- [x] Update logout function in client/scripts/teacher.js to redirect to "/" instead of "../index.html"
-- [x] Update checkTeacherAccess in client/scripts/teacher.js to redirect to "/" instead of "../index.html"
-- [ ] Update logout function in client/scripts/pres-detail.js to redirect to "/" instead of "../index.html"
-- [ ] Update loadPresentationDetails in client/scripts/pres-detail.js to redirect to "/" instead of "../index.html"
-- [ ] Update logout function in client/scripts/group-detail.js to redirect to "/" instead of "../index.html"
-- [ ] Update checkTeacherAccess in client/scripts/group-detail.js to redirect to "/" instead of "../index.html"
-- [ ] Update logout function in client/scripts/student.js to redirect to "/" instead of "/pages/login.html" for consistency
-
-## Followup
-- Test logout buttons to ensure redirection works without "Cannot GET /index.html" error
+## Steps to Complete
+- [x] Unify group ID parameter usage to "groupId" in client/scripts/group-detail.js
+- [x] Modify loadGroupDetails() to use the global groupId variable set by resolveGroupId()
+- [x] Remove duplicate loadGroupDetails() definitions in client/scripts/group-detail.js
+- [x] Ensure groupId is resolved once on DOMContentLoaded and used consistently
+- [ ] Test group detail page with URL parameter "groupId" to confirm group details load correctly

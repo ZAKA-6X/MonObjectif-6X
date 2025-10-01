@@ -1,6 +1,9 @@
 // API endpoint - uses same origin as frontend
 const API_BASE = '/api';
 
+// Global group ID variable
+let groupId = null;
+
 // Get current user from localStorage
 function getCurrentUser() {
   const userData = localStorage.getItem('user');
@@ -53,16 +56,24 @@ function goBack() {
   window.location.href = './teacherdash.html';
 }
 
-// Get group ID from URL parameters
-function getGroupIdFromUrl() {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get('id');
+// Resolve group ID from URL, data attribute, or localStorage
+function resolveGroupId() {
+  const params = new URLSearchParams(window.location.search);
+  const fromUrl = params.get('groupId');
+  if (fromUrl) return fromUrl;
+
+  const sec = document.getElementById('presentations-section');
+  if (sec?.dataset?.groupId) return sec.dataset.groupId;
+
+  const fromLS = localStorage.getItem('currentGroupId');
+  if (fromLS) return fromLS;
+
+  return null;
 }
 
 // Load group details and members
 async function loadGroupDetails() {
-  const groupId = getGroupIdFromUrl();
-  console.log('Group ID from URL:', groupId);
+  console.log('Group ID:', groupId);
   if (!groupId) {
     alert('ID du groupe manquant');
     goBack();
@@ -177,89 +188,40 @@ function viewPresentation(presentationId) {
   window.location.href = `./pres-detail.html?id=${presentationId}`;
 }
 
-let currentGroupId = null;
-
-// View presentation details
-function viewPresentation(presentationId) {
-  window.location.href = `./pres-detail.html?id=${presentationId}`;
-}
-
-// Load group details and members
-async function loadGroupDetails() {
-  const groupId = getGroupIdFromUrl();
-  currentGroupId = groupId;
-  console.log('Group ID from URL:', groupId);
-  if (!groupId) {
-    alert('ID du groupe manquant');
-    goBack();
-    return;
-  }
-
+// Create auto presentation
+async function createAutoPresentation() {
+  const btn = document.getElementById('addPresentationBtn');
   try {
-    // Get group info
-    const groupResponse = await fetch(`${API_BASE}/groups/group/${groupId}`);
-    console.log('Group info response status:', groupResponse.status);
-    if (!groupResponse.ok) {
-      throw new Error('Erreur lors de la récupération des informations du groupe');
+    if (!groupId) {
+      console.error('groupId missing on group-detail page.');
+      return;
     }
-    const groupData = await groupResponse.json();
-    console.log('Group info data:', groupData);
-
-    displayGroupInfo(groupData.group);
-
-    // Get group members
-    const membersResponse = await fetch(`${API_BASE}/groups/members/${groupId}`);
-    console.log('Group members response status:', membersResponse.status);
-    if (!membersResponse.ok) {
-      throw new Error('Erreur lors de la récupération des membres');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Création...';
     }
-    const membersData = await membersResponse.json();
-    console.log('Group members data:', membersData);
 
-    displayMembers(membersData.members);
+    const res = await fetch(`${API_BASE}/presentations/group/${groupId}/auto`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
 
-    // Get group presentations
-    const presentationsResponse = await fetch(`${API_BASE}/presentations/group/${groupId}`);
-    if (!presentationsResponse.ok) {
-      throw new Error('Erreur lors de la récupération des présentations');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.message || 'Échec de création');
     }
-    const presentationsData = await presentationsResponse.json();
 
-    displayGroupPresentations(presentationsData);
-
-    // Show the sections after data is loaded
-    const groupInfoSection = document.getElementById('group-info-section');
-    const membersSection = document.getElementById('members-section');
-    const presentationsSection = document.getElementById('presentations-section');
-    if (groupInfoSection) groupInfoSection.classList.add('active');
-    if (membersSection) membersSection.classList.add('active');
-    if (presentationsSection) presentationsSection.classList.add('active');
-
-  } catch (error) {
-    console.error('Error loading group details:', error);
-    alert('Erreur lors du chargement des détails du groupe');
+    // Refresh the list
+    await loadGroupDetails();
+  } catch (e) {
+    console.error('Failed to auto-create presentation:', e);
+    alert(`Erreur: ${e.message}`);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '➕ Ajouter une présentation';
+    }
   }
-}
-
-// Display group presentations
-function displayGroupPresentations(presentations) {
-  const presentationsListEl = document.getElementById('presentationsList');
-
-  if (!presentations || presentations.length === 0) {
-    presentationsListEl.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><h3>Aucune présentation</h3></div>';
-    return;
-  }
-
-  presentationsListEl.innerHTML = presentations.map(pres => `
-    <div class="card">
-      <h3>${pres.title}</h3>
-      <div class="meta">Note: ${pres.point || 'N/A'}</div>
-      <div class="meta">Statut: ${pres.active ? 'Active' : 'Inactive'}</div>
-      <div class="actions">
-        <button class="btn btn-small" onclick="viewPresentation('${pres.id}')">Voir détails</button>
-      </div>
-    </div>
-  `).join('');
 }
 
 // Initialize page
@@ -268,14 +230,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
   displayUserName();
 
-  // Add event listener shit push for add presentation button
+  // Resolve group ID
+  groupId = resolveGroupId();
+
+  if (!groupId) {
+    console.error('groupId is not defined on group-detail page.');
+    const list = document.getElementById('presentationsList');
+    if (list) {
+      list.innerHTML = `<div class="error-message">Impossible de charger le groupe (groupId manquant)</div>`;
+    }
+    return;
+  }
+
+  // Add event listener for add presentation button
   const addBtn = document.getElementById('addPresentationBtn');
   if (addBtn) {
-    addBtn.addEventListener('click', () => {
-      if (currentGroupId) {
-        createPresentation(currentGroupId);
-      }
-    });
+    addBtn.addEventListener('click', createAutoPresentation);
   }
 
   loadGroupDetails();

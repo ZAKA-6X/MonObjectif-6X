@@ -63,3 +63,43 @@ exports.getMyGroupPresentations = async (req, res) => {
     res.status(500).json({ message: 'Erreur', error: error.message });
   }
 };
+
+// Create an empty active presentation for a group with auto-incremented title
+exports.addAutoPresentation = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    if (!groupId) return res.status(400).json({ message: 'groupId manquant' });
+
+    // Count existing presentations in the group to compute next number
+    const { count, error: countError } = await supabase
+      .from('presentations')
+      .select('*', { count: 'exact', head: true })
+      .eq('group_id', groupId);
+    if (countError) throw countError;
+
+    const next = (count ?? 0) + 1;
+    const title = `Présentation ${next}`;
+
+    const { data, error: insertError } = await supabase
+      .from('presentations')
+      .insert([{
+        title,
+        description: null,
+        name_file: null,
+        path_file: null,
+        group_id: groupId,
+        feedback: null,
+        active: true,
+        point: null,          // REAL can stay null
+        // uploaded_at default now()
+      }])
+      .select('*')
+      .single();
+
+    if (insertError) throw insertError;
+    return res.status(201).json(data);
+  } catch (error) {
+    console.error('addAutoPresentation error:', error);
+    return res.status(500).json({ message: 'Erreur lors de la création automatique', error: error.message });
+  }
+};

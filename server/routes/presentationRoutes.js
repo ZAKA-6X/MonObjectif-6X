@@ -13,4 +13,8 @@ router.get('/presentations/my-group/:userId', presentationController.getMyGroupP
 // ✅ NEW: Get presentations by groupId (what the frontend calls)
 router.get('/presentations/group/:groupId', presentationController.getPresentationsByGroupId);
 
+// Create an empty active presentation for a group (auto name)
+router.post('/presentations/group/:groupId/auto', presentationController.addAutoPresentation);
+
+
 module.exports = router;
