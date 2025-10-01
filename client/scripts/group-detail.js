@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   displayUserName();
 
-  // Add event listener for add presentation button
+  // Add event listener shit push for add presentation button
   const addBtn = document.getElementById('addPresentationBtn');
   if (addBtn) {
     addBtn.addEventListener('click', () => {
