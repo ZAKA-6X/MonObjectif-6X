@@ -98,8 +98,8 @@ exports.getPresentationDetails = async (req, res) => {
         if (user.role === "TEACHER") {
           userType = "teacher";
           permissions = {
-            canEditDescription: true,
-            canUpload: true,
+            canEditDescription: false,
+            canUpload: false,
             canRate: true,
             canAddFeedback: true,
             canViewAll: true,
