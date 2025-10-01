@@ -14,13 +14,13 @@ create table public.presentations (
   id uuid not null default gen_random_uuid (),
   title text not null,
   description text null,
-  name_file text not null,
-  path_file text not null,
+  name_file text null,
+  path_file text null,
   group_id uuid null,
-  point integer null default 0,
   feedback text null,
   uploaded_at timestamp with time zone null default now(),
   active boolean not null default false,
+  point real null,
   constraint presentations_pkey primary key (id),
   constraint presentations_group_id_fkey foreign KEY (group_id) references "group" (id) on delete set null
 ) TABLESPACE pg_default;
@@ -46,3 +46,25 @@ create table public.group_members (
   constraint group_members_user_id_fkey foreign KEY (user_id) references users (id) on delete CASCADE
 ) TABLESPACE pg_default;
 
+-- Rating table:
+create table public.ratings (
+  id uuid not null default gen_random_uuid (),
+  presentation_id uuid not null,
+  user_id uuid not null,
+  rating numeric(4, 2) not null,
+  created_at timestamp with time zone not null default now(),
+  constraint ratings_pkey primary key (id),
+  constraint ratings_user_presentation_unique unique (presentation_id, user_id),
+  constraint ratings_presentation_id_fkey foreign KEY (presentation_id) references presentations (id) on delete CASCADE,
+  constraint ratings_user_id_fkey foreign KEY (user_id) references users (id) on delete CASCADE,
+  constraint ratings_rating_check check (
+    (
+      (rating >= (0)::numeric)
+      and (rating <= (20)::numeric)
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_ratings_presentation_id on public.ratings using btree (presentation_id) TABLESPACE pg_default;
+
+create index IF not exists idx_ratings_user_id on public.ratings using btree (user_id) TABLESPACE pg_default;

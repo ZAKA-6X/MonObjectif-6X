@@ -9,4 +9,8 @@ router.get('/presentations/active', presentationController.getActivePresentation
 // Get user's group presentations
 router.get('/presentations/my-group/:userId', presentationController.getMyGroupPresentations);
 
+
+// ✅ NEW: Get presentations by groupId (what the frontend calls)
+router.get('/presentations/group/:groupId', presentationController.getPresentationsByGroupId);
+
 module.exports = router;

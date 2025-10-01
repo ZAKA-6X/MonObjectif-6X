@@ -16,6 +16,24 @@ exports.getActivePresentations = async (req, res) => {
   }
 };
 
+// ✅ NEW: Get presentations by groupId (used by group-detail.js)
+exports.getPresentationsByGroupId = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+
+    const { data, error } = await supabase
+      .from('presentations')
+      .select('*')
+      .eq('group_id', groupId)
+      .order('uploaded_at', { ascending: false });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur', error: error.message });
+  }
+};
+
 // Get user's group presentations
 exports.getMyGroupPresentations = async (req, res) => {
   try {

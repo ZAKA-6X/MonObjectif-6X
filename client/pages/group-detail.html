@@ -27,7 +27,9 @@
         <section id="group-info-section" class="content-section">
           <div class="section-header">
             <h2 id="groupTitle">Informations du Groupe</h2>
-            <button class="btn btn-secondary" onclick="goBack()">← Retour</button>
+            <button class="btn btn-secondary" onclick="goBack()">
+              ← Retour
+            </button>
           </div>
           <div id="groupInfo" class="group-info-card">
             <!-- Group info will be populated here -->
@@ -45,15 +47,20 @@
         </section>
 
         <!-- Presentations Section -->
-          <section id="presentations-section" class="content-section">
-            <div class="section-header">
-              <h2>📋 Présentations du Groupe</h2>
+        <section id="presentations-section" class="content-section">
+          <div class="section-header">
+            <h2>📋 Présentations du Groupe</h2>
+            <div class="section-actions">
+              <button id="addPresentationBtn" class="btn btn-primary">
+                ➕ Ajouter une présentation
+              </button>
             </div>
-            <div id="presentationsList" class="cards-grid">
-              <!-- Presentations will be populated here -->
-            </div>
-          </section>
+          </div>
 
+          <div id="presentationsList" class="cards-grid">
+            <!-- Presentations will be populated here -->
+          </div>
+        </section>
       </div>
     </div>
 

@@ -647,3 +647,19 @@ body {
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+.section-actions { display: flex; gap: .5rem; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .6rem .9rem; border: none; border-radius: .5rem;
+  cursor: pointer; font-weight: 600;
+}
+.btn-primary { background: #667eea; color: #fff; }
+.btn-primary:hover { filter: brightness(0.95); }
