@@ -13,3 +13,13 @@
 - [x] Modify server/controllers/pres-detailController.js to set canUpload and canEditDescription to false for teachers
 - [ ] Test presentation detail page as teacher to confirm upload and description edit are disabled
 - [ ] Test that note and feedback functionality still works for teacher
+
+# TODO: Add Toggle Active Button for Teachers in Presentation Detail Page
+
+## Steps to Complete
+- [x] Add toggle active button in client/pages/pres-detail.html
+- [x] Show button only for teachers in client/scripts/pres-detail.js
+- [x] Add toggleActive function in client/scripts/pres-detail.js
+- [x] Add toggleActivePresentation function in server/controllers/pres-detailController.js
+- [x] Add route for toggle-active in server/routes/pres-detailRoutes.js
+- [ ] Test toggle active functionality as teacher

@@ -21,6 +21,9 @@ router.put('/presentations/:presentationId/description', presentationController.
 // Update presentation feedback
 router.put('/presentations/:presentationId/feedback', presentationController.updatePresentationFeedback);
 
+// Toggle active status
+router.put('/presentations/:presentationId/toggle-active', presentationController.toggleActivePresentation);
+
 // Download presentation file
 router.get('/presentations/:presentationId/download', presentationController.downloadPresentation);
 

@@ -165,10 +165,18 @@ async function loadPresentationDetails() {
     const uploadSection = document.getElementById("uploadSection");
     const downloadSection = document.getElementById("downloadSection");
     const viewOnlyNote = document.getElementById("viewOnlyNote");
+    const toggleActiveSection = document.getElementById("toggleActiveSection");
 
     // Always show download section if file exists
     if (downloadSection && data.presentation.path_file) {
       downloadSection.style.display = "block";
+    }
+
+    if (data.userType === "teacher") {
+      // Show toggle active button for teachers
+      if (toggleActiveSection) toggleActiveSection.style.display = "block";
+    } else {
+      if (toggleActiveSection) toggleActiveSection.style.display = "none";
     }
 
     if (data.permissions.canUpload) {
@@ -466,6 +474,48 @@ function showError(message) {
   const errorEl = document.getElementById("errorMessage");
   errorEl.textContent = message;
   errorEl.style.display = "block";
+}
+
+// Toggle active status of presentation (teacher only)
+async function toggleActive() {
+  if (!currentPresentation) {
+    alert("Aucune présentation chargée");
+    return;
+  }
+
+  const user = getCurrentUser();
+  if (!user) {
+    window.location.href = "/";
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${API_URL}/presentations/${currentPresentation.id}/toggle-active`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+        }),
+      }
+    );
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert(result.message || "Statut actif basculé avec succès!");
+      // Reload details to update UI
+      loadPresentationDetails();
+    } else {
+      alert(result.error || "Erreur lors du basculement du statut actif");
+    }
+  } catch (err) {
+    console.error("Toggle active error:", err);
+    alert("Erreur lors du basculement du statut actif");
+  }
 }
 
 // Upload presentation file

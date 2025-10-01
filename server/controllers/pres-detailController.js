@@ -469,6 +469,78 @@ exports.updatePresentationFeedback = async (req, res) => {
   }
 };
 
+// Toggle active status of presentation (teacher only)
+exports.toggleActivePresentation = async (req, res) => {
+  try {
+    const { presentationId } = req.params;
+    const { userId } = req.body;
+
+    // Validate input
+    if (!userId) {
+      return res.status(400).json({
+        error: "userId est requis",
+      });
+    }
+
+    // Get user details to check role
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", userId)
+      .single();
+
+    if (userError || !user) {
+      return res.status(404).json({
+        error: "Utilisateur non trouvé",
+      });
+    }
+
+    // Check if user is teacher
+    if (user.role !== "TEACHER") {
+      return res.status(403).json({
+        error: "Seuls les enseignants peuvent basculer le statut actif",
+      });
+    }
+
+    // Get presentation details
+    const { data: presentation, error: presError } = await supabase
+      .from("presentations")
+      .select("*")
+      .eq("id", presentationId)
+      .single();
+
+    if (presError || !presentation) {
+      return res.status(404).json({
+        error: "Présentation non trouvée",
+      });
+    }
+
+    // Toggle active status
+    const newActiveStatus = !presentation.active;
+
+    // Update presentation active status
+    const { error: updateError } = await supabase
+      .from("presentations")
+      .update({ active: newActiveStatus })
+      .eq("id", presentationId);
+
+    if (updateError) {
+      throw updateError;
+    }
+
+    res.json({
+      message: `Présentation ${newActiveStatus ? 'activée' : 'désactivée'} avec succès`,
+      active: newActiveStatus,
+    });
+  } catch (error) {
+    console.error("Toggle active presentation error:", error);
+    res.status(500).json({
+      error: "Erreur lors du basculement du statut actif",
+      details: error.message,
+    });
+  }
+};
+
 // Download presentation file
 exports.downloadPresentation = async (req, res) => {
   try {
