@@ -3,67 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Détails du Groupe</title>
-    <link rel="stylesheet" href="../styles/teacher.css" />
+    <title>MonObjectif-6X | Groupe</title>
+    <link rel="icon" href="../assets/logo.png" type="image/png" />
+    <link rel="stylesheet" href="../styles/group-detail.css" />
+    <link rel="stylesheet" href="../styles/alerts.css" />
   </head>
   <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="navbar-brand">
-        <span class="brand-icon">👥</span>
-        <span class="brand-text">Détails du Groupe</span>
-      </div>
-      <div class="navbar-user">
-        <span class="welcome-text">Bienvenue, <span id="userName"></span></span>
-        <button class="logout-btn" onclick="logout()">Déconnexion</button>
-      </div>
-    </nav>
+    <div class="page">
+      <!-- Navbar -->
+      <nav class="navbar">
+        <div class="nav-inner">
+          <button class="back-btn" onclick="goBack()" aria-label="Retour">
+            <span class="back-icon" aria-hidden="true">←</span>
+            <span class="back-label">Retour</span>
+          </button>
+          <a class="brand" href="#" aria-label="MonObjectif – Détails du groupe">
+            <span class="brand-badge" aria-hidden="true"></span>
+            <span>
+              <span class="brand-text">MonObjectif - 6X</span>
+              <span class="brand-sub">présentations & groupes</span>
+            </span>
+          </a>
+          <div class="navbar-actions">
+            <button class="logout-btn" onclick="logout()">Déconnexion</button>
+          </div>
+        </div>
+      </nav>
 
-    <!-- Main Container -->
-    <div class="container">
-      <!-- Main Content Area -->
-      <div class="main-content">
-        <!-- Group Info Section -->
-        <section id="group-info-section" class="content-section">
-          <div class="section-header">
-            <h2 id="groupTitle">Informations du Groupe</h2>
-            <button class="btn btn-secondary" onclick="goBack()">
-              ← Retour
-            </button>
-          </div>
-          <div id="groupInfo" class="group-info-card">
-            <!-- Group info will be populated here -->
-          </div>
-        </section>
+      <!-- Main Container -->
+      <main class="main-container">
+        <div class="group-layout">
+          <div class="group-main">
+            <section id="presentations-section" class="content-section">
+              <div class="section-header">
+                <h2>📋 Présentations du groupe</h2>
+                <div class="section-actions">
+                  <button id="addPresentationBtn" class="btn btn-primary">
+                    ➕ Ajouter une présentation
+                  </button>
+                </div>
+              </div>
 
-        <!-- Members Section -->
-        <section id="members-section" class="content-section">
-          <div class="section-header">
-            <h2>👥 Membres du Groupe</h2>
-          </div>
-          <div id="membersList" class="members-grid">
-            <!-- Members will be populated here -->
-          </div>
-        </section>
-
-        <!-- Presentations Section -->
-        <section id="presentations-section" class="content-section">
-          <div class="section-header">
-            <h2>📋 Présentations du Groupe</h2>
-            <div class="section-actions">
-              <button id="addPresentationBtn" class="btn btn-primary">
-                ➕ Ajouter une présentation
-              </button>
-            </div>
+              <div id="presentationsList" class="cards-grid">
+                <!-- Presentations will be populated here -->
+              </div>
+            </section>
           </div>
 
-          <div id="presentationsList" class="cards-grid">
-            <!-- Presentations will be populated here -->
-          </div>
-        </section>
-      </div>
+          <aside class="group-aside">
+            <section id="members-section" class="content-section">
+              <div class="section-header">
+                <h2 id="membersHeading"></h2>
+              </div>
+              <div id="membersList" class="members-grid">
+                <!-- Members will be populated here -->
+              </div>
+            </section>
+          </aside>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="footer-content">
+          <span>MonObjectif © 2025</span>
+          <span class="footer-separator">•</span>
+          <span>Système de gestion de présentations</span>
+        </div>
+      </footer>
     </div>
 
+    <script src="../scripts/alerts.js"></script>
     <script src="../scripts/group-detail.js"></script>
   </body>
 </html>

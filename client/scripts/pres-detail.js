@@ -14,6 +14,40 @@ function getCurrentUser() {
   return userData ? JSON.parse(userData) : null;
 }
 
+// Load and display group members
+async function loadGroupMembers(groupId) {
+  try {
+    const response = await fetch(`${API_URL}/groups/members/${groupId}`);
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des membres');
+    }
+    const data = await response.json();
+    displayMembers(data.members);
+  } catch (error) {
+    console.error('Error loading members:', error);
+    // Optionally show error in membersList
+    const membersListEl = document.getElementById('membersList');
+    membersListEl.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Erreur de chargement</h3></div>';
+  }
+}
+
+// Display members
+function displayMembers(members) {
+  const membersListEl = document.getElementById('membersList');
+  if (!members || members.length === 0) {
+    membersListEl.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div><h3>Aucun membre</h3></div>';
+    return;
+  }
+  membersListEl.innerHTML = members.map(member => `
+    <div class="member-card">
+      <div class="member-header">
+        <h3>${member.prenom} ${member.nom}</h3>
+        <span class="member-role">${member.role}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
 // Display presentation details based on user type and permissions
 function displayPresentationDetails(
   presentation,
@@ -40,10 +74,23 @@ function displayPresentationDetails(
   }
 
   // Status
-  const statusEl = document.getElementById("presStatus");
+  const statusBtn = document.getElementById("statusToggle");
   const isActive = Boolean(presentation.active);
-  statusEl.textContent = isActive ? "Active" : "Inactive";
-  statusEl.className = `pres-status ${isActive ? "active" : "inactive"}`;
+  if (statusBtn) {
+    const statusLabel = isActive ? "Active" : "Inactive";
+    statusBtn.textContent = statusLabel;
+    statusBtn.className = `status-toggle ${isActive ? "active" : "inactive"}`;
+    statusBtn.setAttribute("aria-pressed", String(isActive));
+    if (userType === "teacher") {
+      statusBtn.disabled = false;
+      statusBtn.title = isActive
+        ? "Cliquer pour rendre la présentation inactive"
+        : "Cliquer pour activer la présentation";
+    } else {
+      statusBtn.disabled = true;
+      statusBtn.title = statusLabel;
+    }
+  }
 
   // Info cards
   document.getElementById("groupName").textContent =
@@ -66,6 +113,15 @@ function displayPresentationDetails(
 
   document.getElementById("fileName").textContent =
     presentation.name_file || "—";
+
+  // Control group info visibility on small screens for group members
+  const rightSection = document.querySelector(".right-section");
+  if (rightSection) {
+    rightSection.classList.toggle(
+      "hide-on-narrow",
+      userType === "student_in_group"
+    );
+  }
 
   // Feedback section - show based on user type
   const feedbackSection = document.querySelector(".feedback-section");
@@ -161,22 +217,24 @@ async function loadPresentationDetails() {
       data.hasRated
     );
 
+    // Fetch and display group members
+    if (data.group && data.group.id) {
+      loadGroupMembers(data.group.id);
+    }
+
     // Show/hide sections based on permissions
     const uploadSection = document.getElementById("uploadSection");
     const downloadSection = document.getElementById("downloadSection");
     const viewOnlyNote = document.getElementById("viewOnlyNote");
-    const toggleActiveSection = document.getElementById("toggleActiveSection");
+    const statusBtn = document.getElementById("statusToggle");
 
     // Always show download section if file exists
     if (downloadSection && data.presentation.path_file) {
       downloadSection.style.display = "block";
     }
 
-    if (data.userType === "teacher") {
-      // Show toggle active button for teachers
-      if (toggleActiveSection) toggleActiveSection.style.display = "block";
-    } else {
-      if (toggleActiveSection) toggleActiveSection.style.display = "none";
+    if (statusBtn) {
+      statusBtn.disabled = data.userType !== "teacher";
     }
 
     if (data.permissions.canUpload) {
@@ -433,7 +491,7 @@ async function saveDescription() {
 
 async function downloadPresentation() {
   if (!currentPresentation || !currentPresentation.path_file) {
-    alert("There is nothing to download");
+    showAlert("There is nothing to download", 'info');
     return;
   }
 
@@ -446,7 +504,7 @@ async function downloadPresentation() {
 
     if (!response.ok) {
       // If file not found or error, alert user
-      alert("There is nothing to download");
+      showAlert("There is nothing to download", 'info');
       return;
     }
 
@@ -464,7 +522,7 @@ async function downloadPresentation() {
     window.URL.revokeObjectURL(url);
   } catch (err) {
     console.error("Download error:", err);
-    alert("Error during download");
+    showAlert("Erreur lors du téléchargement", 'error');
   }
 }
 
@@ -479,7 +537,7 @@ function showError(message) {
 // Toggle active status of presentation (teacher only)
 async function toggleActive() {
   if (!currentPresentation) {
-    alert("Aucune présentation chargée");
+    showAlert("Aucune présentation chargée", 'warning');
     return;
   }
 
@@ -506,15 +564,15 @@ async function toggleActive() {
     const result = await response.json();
 
     if (response.ok) {
-      alert(result.message || "Statut actif basculé avec succès!");
+      showAlert(result.message || "Statut actif basculé avec succès!", 'success');
       // Reload details to update UI
       loadPresentationDetails();
     } else {
-      alert(result.error || "Erreur lors du basculement du statut actif");
+      showAlert(result.error || "Erreur lors du basculement du statut actif", 'error');
     }
   } catch (err) {
     console.error("Toggle active error:", err);
-    alert("Erreur lors du basculement du statut actif");
+    showAlert("Erreur lors du basculement du statut actif", 'error');
   }
 }
 

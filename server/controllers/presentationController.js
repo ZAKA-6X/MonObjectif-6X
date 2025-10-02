@@ -5,7 +5,7 @@ exports.getActivePresentations = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('presentations')
-      .select('*')
+      .select('*, group(name)')
       .eq('active', true)
       .order('uploaded_at', { ascending: false });
 
@@ -53,9 +53,8 @@ exports.getMyGroupPresentations = async (req, res) => {
     // Get group's presentations
     const { data, error } = await supabase
       .from('presentations')
-      .select('*')
+      .select('*, group(name)')
       .eq('group_id', membership.group_id)
-      .order('uploaded_at', { ascending: false });
 
     if (error) throw error;
     res.json(data);

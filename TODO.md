@@ -1,25 +1,6 @@
-# TODO: Fix Group ID Issue in Group Detail Page
-
-## Steps to Complete
-- [x] Unify group ID parameter usage to "groupId" in client/scripts/group-detail.js
-- [x] Modify loadGroupDetails() to use the global groupId variable set by resolveGroupId()
-- [x] Remove duplicate loadGroupDetails() definitions in client/scripts/group-detail.js
-- [x] Ensure groupId is resolved once on DOMContentLoaded and used consistently
-- [ ] Test group detail page with URL parameter "groupId" to confirm group details load correctly
-
-# TODO: Modify Teacher Permissions in Presentation Detail Page
-
-## Steps to Complete
-- [x] Modify server/controllers/pres-detailController.js to set canUpload and canEditDescription to false for teachers
-- [ ] Test presentation detail page as teacher to confirm upload and description edit are disabled
-- [ ] Test that note and feedback functionality still works for teacher
-
-# TODO: Add Toggle Active Button for Teachers in Presentation Detail Page
-
-## Steps to Complete
-- [x] Add toggle active button in client/pages/pres-detail.html
-- [x] Show button only for teachers in client/scripts/pres-detail.js
-- [x] Add toggleActive function in client/scripts/pres-detail.js
-- [x] Add toggleActivePresentation function in server/controllers/pres-detailController.js
-- [x] Add route for toggle-active in server/routes/pres-detailRoutes.js
-- [ ] Test toggle active functionality as teacher
+- [x] Add right-section inside main-layout in pres-detail.html
+- [x] Move group-info-section into the new right-section
+- [x] Remove the old group-info-section from the bottom
+- [x] Rework group-detail layout with presentations left and members right
+- [x] Add navbar return control consistent with pres-detail
+- [x] Ensure members panel displays group name prominently

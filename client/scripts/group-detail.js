@@ -45,10 +45,8 @@ function displayUserName() {
 
 // Logout function
 function logout() {
-  if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
     localStorage.removeItem('user');
-    window.location.href = '../index.html';
-  }
+    window.location.href = '/';
 }
 
 // Go back to teacher dashboard
@@ -75,7 +73,7 @@ function resolveGroupId() {
 async function loadGroupDetails() {
   console.log('Group ID:', groupId);
   if (!groupId) {
-    alert('ID du groupe manquant');
+    showAlert('ID du groupe manquant', 'error');
     goBack();
     return;
   }
@@ -113,16 +111,14 @@ async function loadGroupDetails() {
     displayGroupPresentations(presentationsData);
 
     // Show the sections after data is loaded
-    const groupInfoSection = document.getElementById('group-info-section');
     const membersSection = document.getElementById('members-section');
     const presentationsSection = document.getElementById('presentations-section');
-    if (groupInfoSection) groupInfoSection.classList.add('active');
     if (membersSection) membersSection.classList.add('active');
     if (presentationsSection) presentationsSection.classList.add('active');
 
   } catch (error) {
     console.error('Error loading group details:', error);
-    alert('Erreur lors du chargement des détails du groupe');
+    showAlert('Erreur lors du chargement des détails du groupe', 'error');
   }
 }
 
@@ -150,18 +146,13 @@ function displayGroupPresentations(presentations) {
 // Display group information
 function displayGroupInfo(group) {
   const groupInfoEl = document.getElementById('groupInfo');
-  const groupTitleEl = document.getElementById('groupTitle');
+  const membersHeadingEl = document.getElementById('membersHeading');
 
-  groupTitleEl.textContent = `Groupe: ${group.name}`;
+  if (membersHeadingEl) {
+    const groupName = group.name || 'Groupe';
+    membersHeadingEl.textContent = `${groupName}`;
+  }
 
-  groupInfoEl.innerHTML = `
-    <div class="info-item">
-      <strong>Nom:</strong> ${group.name}
-    </div>
-    <div class="info-item">
-      <strong>Créé le:</strong> ${new Date(group.created_at).toLocaleDateString('fr-FR')}
-    </div>
-  `;
 }
 
 // Display members
@@ -215,7 +206,7 @@ async function createAutoPresentation() {
     await loadGroupDetails();
   } catch (e) {
     console.error('Failed to auto-create presentation:', e);
-    alert(`Erreur: ${e.message}`);
+    showAlert(`Erreur: ${e.message}`, 'error');
   } finally {
     if (btn) {
       btn.disabled = false;

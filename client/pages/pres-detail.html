@@ -3,18 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Détails Présentation</title>
+    <title>MonObjectif-6X | Présentation</title>
+    <link rel="icon" href="../assets/logo.png" type="image/png" />
     <link rel="stylesheet" href="../styles/pres-detail.css" />
+    <link rel="stylesheet" href="../styles/alerts.css" />
   </head>
   <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="navbar-brand">📚 Détails de la Présentation</div>
-      <div class="navbar-user">
-        <button class="back-btn" onclick="goBack()">← Retour</button>
-        <button class="logout-btn" onclick="logout()">Déconnexion</button>
-      </div>
-    </nav>
+      <!-- Navbar -->
+      <nav class="navbar">
+        <div class="nav-inner">
+          <button class="back-btn" onclick="goBack()" aria-label="Retour">
+            <span class="back-icon" aria-hidden="true">←</span>
+            <span class="back-label">Retour</span>
+          </button>
+        <a class="brand" href="#" aria-label="MonObjectif – Détails présentation">
+            <span class="brand-badge" aria-hidden="true"></span>
+            <span>
+              <span class="brand-text">MonObjectif - 6X</span>
+              <span class="brand-sub">présentations & groupes</span>
+            </span>
+          </a>
+          <div class="navbar-actions">
+            <button class="logout-btn" onclick="logout()">Déconnexion</button>
+          </div>
+        </div>
+      </nav>
 
     <!-- Main Container -->
     <div class="container">
@@ -22,105 +35,143 @@
       <div id="errorMessage" class="error-message" style="display: none"></div>
 
       <div id="presentationDetails" style="display: none">
-        <!-- Presentation Header -->
-        <div class="pres-header">
-          <div class="pres-title-section">
-            <h1 id="presTitle"></h1>
-            <div id="descriptionDisplay">
-              <p id="presDescription" class="description"></p>
-              <button id="editDescriptionBtn" class="btn-edit" style="display: none" onclick="toggleDescriptionEdit()">
-                ✏️ Modifier
-              </button>
-            </div>
-            <div id="descriptionEditForm" style="display: none">
-              <textarea id="descriptionTextarea" rows="4" placeholder="Entrez la description..."></textarea>
-              <div class="edit-actions">
-                <button class="btn btn-primary" onclick="saveDescription()">💾 Enregistrer</button>
-                <button class="btn btn-secondary" onclick="cancelDescriptionEdit()">❌ Annuler</button>
+        <!-- Main Content Layout -->
+        <div class="main-layout">
+          <!-- Left Section -->
+          <div class="left-section">
+            <!-- Presentation Title & Description Card -->
+            <div class="info-card">
+              <div class="card-header">
+                <h2 id="presTitle"></h2>
+                <div class="header-actions">
+                  <button
+                    id="statusToggle"
+                    class="status-toggle"
+                    type="button"
+                    onclick="toggleActive()"
+                    disabled
+                  >
+                    —
+                  </button>
+                </div>
               </div>
-              <div id="descriptionMessage" class="description-message"></div>
+              <div id="descriptionDisplay">
+                <p id="presDescription" class="description"></p>
+                <button
+                  id="editDescriptionBtn"
+                  class="btn-edit"
+                  style="display: none"
+                  onclick="toggleDescriptionEdit()"
+                >
+                  Modifier
+                </button>
+              </div>
+              <div id="descriptionEditForm" style="display: none">
+                <textarea
+                  id="descriptionTextarea"
+                  rows="4"
+                  placeholder="Entrez la description..."
+                ></textarea>
+                <div class="edit-actions">
+                  <button class="btn btn-primary" onclick="saveDescription()">
+                    Enregistrer
+                  </button>
+                  <button
+                    class="btn btn-secondary"
+                    onclick="cancelDescriptionEdit()"
+                  >
+                    Annuler
+                  </button>
+                </div>
+                <div id="descriptionMessage" class="description-message"></div>
+              </div>
+            </div>
+
+            <!-- PPT File Card -->
+            <div class="info-card">
+              <h3>Fichier de présentation</h3>
+              <div class="file-info">
+                <p id="fileName" class="file-name"></p>
+                <button
+                  class="btn btn-primary"
+                  onclick="downloadPresentation()"
+                >
+                  Télécharger
+                </button>
+              </div>
+              <p id="uploadDate" class="upload-date"></p>
+            </div>
+
+            <!-- Points Card -->
+            <div class="info-card">
+              <h3>Points</h3>
+              <div id="points" class="points-value"></div>
             </div>
           </div>
-          <div class="pres-status" id="presStatus"></div>
-        </div>
 
-        <!-- Presentation Info Cards -->
-        <div class="info-grid">
-          <div class="info-card">
-            <div class="info-icon">👥</div>
-            <div class="info-content">
-              <div class="info-label">Groupe</div>
-              <div class="info-value" id="groupName"></div>
-            </div>
-          </div>
-
-          <div class="info-card">
-            <div class="info-icon">📅</div>
-            <div class="info-content">
-              <div class="info-label">Date de téléchargement</div>
-              <div class="info-value" id="uploadDate"></div>
-            </div>
-          </div>
-
-          <div class="info-card">
-            <div class="info-icon">⭐</div>
-            <div class="info-content">
-              <div class="info-label">Points</div>
-              <div class="info-value" id="points"></div>
-            </div>
-          </div>
-
-          <div class="info-card">
-            <div class="info-icon">📄</div>
-            <div class="info-content">
-              <div class="info-label">Fichier</div>
-              <div class="info-value" id="fileName"></div>
+          <!-- Right Section -->
+          <div class="right-section">
+            <div class="group-info-section">
+              <div class="group-card">
+                <h3>Informations du groupe</h3>
+                <div class="group-name">
+                  <h2 id="groupName"></h2>
+                </div>
+                <div class="members-section">
+                  <div id="membersList" class="members-list">
+                    <!-- Members will be populated by JavaScript -->
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Feedback Section -->
         <div class="feedback-section">
-          <h3>💬 Feedback</h3>
+          <h3>Feedback</h3>
           <div id="feedbackContent" class="feedback-content"></div>
         </div>
 
         <!-- Teacher Grading Section (only for teachers) -->
-<div id="teacherGradingSection" class="teacher-grading-section" style="display: none">
-  <h3>📝 Évaluation Enseignant</h3>
-  <form id="teacherGradingForm" class="teacher-grading-form">
-    <div class="form-group">
-      <label for="teacherNoteInput">Note (sur 20):</label>
-      <input
-        type="number"
-        id="teacherNoteInput"
-        min="0"
-        max="20"
-        step="0.5"
-        required
-        placeholder="Ex: 15"
-      />
-    </div>
-    <div class="form-group">
-      <label for="teacherFeedbackInput">Feedback:</label>
-      <textarea
-        id="teacherFeedbackInput"
-        rows="5"
-        placeholder="Entrez votre feedback..."
-        required
-      ></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">
-      ✅ Enregistrer l'évaluation
-    </button>
-  </form>
-  <div id="teacherGradingMessage" class="teacher-grading-message"></div>
-</div>
-        
+        <div
+          id="teacherGradingSection"
+          class="teacher-grading-section"
+          style="display: none"
+        >
+          <h3>Évaluation Enseignant</h3>
+          <form id="teacherGradingForm" class="teacher-grading-form">
+            <div class="form-group">
+              <label for="teacherNoteInput">Note (sur 20):</label>
+              <input
+                type="number"
+                id="teacherNoteInput"
+                min="0"
+                max="20"
+                step="0.5"
+                required
+                placeholder="Ex: 15"
+              />
+            </div>
+            <div class="form-group">
+              <label for="teacherFeedbackInput">Feedback:</label>
+              <textarea
+                id="teacherFeedbackInput"
+                rows="5"
+                placeholder="Entrez votre feedback..."
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Enregistrer l'évaluation
+            </button>
+          </form>
+          <div id="teacherGradingMessage" class="teacher-grading-message"></div>
+        </div>
 
         <!-- Rating Section (only for other groups) -->
         <div id="ratingSection" class="rating-section" style="display: none">
-          <h3>⭐ Évaluer cette présentation</h3>
+          <h3>Évaluer cette présentation</h3>
           <form id="ratingForm" class="rating-form">
             <div class="rating-input-group">
               <label for="ratingInput">Note (sur 20):</label>
@@ -135,10 +186,10 @@
               />
             </div>
             <button type="submit" class="btn btn-primary">
-              ✅ Soumettre la note
+              Soumettre la note
             </button>
           </form>
-          <div id="ratingMessage" class="rating-message"></div>
+          <div id="ratingMessage" class="rating-message" style="display: none"></div>
         </div>
 
         <!-- Actions -->
@@ -148,37 +199,25 @@
             <form id="uploadForm" class="upload-form">
               <input type="file" id="pptFile" accept=".ppt,.pptx" required />
               <button type="submit" class="btn btn-primary">
-                📤 Téléverser une présentation
+                Téléverser une présentation
               </button>
             </form>
             <div id="uploadMessage" class="upload-message"></div>
-          </div>
-
-          <!-- Download Section (available for all users) -->
-          <div id="downloadSection" class="download-section">
-            <button class="btn btn-primary" onclick="downloadPresentation()">
-              📥 Télécharger la présentation
-            </button>
-          </div>
-
-          <!-- Toggle Active Section (only for teachers) -->
-          <div id="toggleActiveSection" style="display: none">
-            <button class="btn btn-secondary" onclick="toggleActive()">
-              🔄 Basculer Actif/Inactif
-            </button>
-          </div>
-
-          <!-- View-Only Note (for users from other groups) -->
-          <div id="viewOnlyNote" style="display: none">
-            <p class="view-only-note">
-              Vous pouvez télécharger cette présentation mais pas la modifier
-              (groupe différent)
-            </p>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <span>MonObjectif © 2025</span>
+        <span style="color: var(--line)">•</span>
+        <span>Système de gestion de présentations</span>
+      </div>
+    </footer>
+
+    <script src="../scripts/alerts.js"></script>
     <script src="../scripts/pres-detail.js"></script>
   </body>
 </html>

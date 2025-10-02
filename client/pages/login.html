@@ -2,19 +2,80 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Login</title>
-  <link rel="stylesheet" href="../styles/login.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MonObjectif - 6X</title>
+    <link rel="icon" href="../assets/logo.png" type="image/png" />
+    <link rel="stylesheet" href="../styles/login.css" />
+    <link rel="stylesheet" href="../styles/alerts.css" />
 </head>
 <body>
-  <div class="login-container">
-    <h2>Connexion</h2>
-    <form id="loginForm">
-      <input type="text" id="nom" placeholder="Nom" required />
-      <input type="password" id="password" placeholder="Mot de passe" required />
-      <button type="submit">Se connecter</button>
-    </form>
-    <div class="message" id="message"></div>
+  <div class="page">
+    <!-- Fixed, minimal navbar (no footer) -->
+    <nav class="navbar">
+      <div class="nav-inner">
+        <a class="brand" href="#">
+          <span class="brand-badge" aria-hidden="true"></span>
+          <span>
+            <span class="brand-text">MonObjectif - 6X</span>
+            <span class="brand-sub">gérer vos présentations.</span>
+          </span>
+        </a>
+        <!-- (Optional space for future links or language switcher) -->
+        <div></div>
+      </div>
+    </nav>
+
+    <main class="main">
+      <section class="card" aria-labelledby="title">
+        <h2 id="title">Connexion</h2>
+
+        <form id="loginForm" class="form" autocomplete="on">
+          <div>
+            <label class="label" for="nom">Nom</label>
+            <input class="input" type="text" id="nom" name="nom" placeholder="Entrez votre nom" required />
+          </div>
+
+          <div class="input-row">
+            <div class="input-wrapper">
+              <label class="label" for="password">Mot de passe</label>
+              <input class="input" type="password" id="password" name="password" placeholder="••••••••" required />
+            </div>
+          </div>
+
+          <div id="resetFields" style="display:none">
+            <div class="input-row">
+              <div class="input-wrapper">
+                <label class="label" for="newPassword">Nouveau mot de passe</label>
+                <input class="input" type="password" id="newPassword" name="newPassword" placeholder="Minimum 4 caractères" minlength="4" />
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="input-wrapper">
+                <label class="label" for="confirmPassword">Confirmer le mot de passe</label>
+                <input class="input" type="password" id="confirmPassword" name="confirmPassword" placeholder="Répétez le mot de passe" minlength="4" />
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn">Se connecter</button>
+
+          <div class="meta">
+            <span></span>
+            <a
+              href="https://wa.me/212720804725"
+              class="link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Mot de passe oublié ? 
+            </a>
+          </div>
+        </form>
+      </section>
+    </main>
   </div>
-  <script src="../scripts/login.js"></script>
+
+    <script src="../scripts/alerts.js"></script>
+    <script src="../scripts/login.js"></script>
 </body>
 </html>

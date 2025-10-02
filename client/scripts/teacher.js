@@ -42,33 +42,21 @@ function displayUserName() {
 
 // Logout function
 function logout() {
-  if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
     localStorage.removeItem("user");
     window.location.href = "/";
-  }
 }
 
 // Handle section navigation
 function initSectionNavigation() {
-  const navItems = document.querySelectorAll(".nav-item");
-  const sections = document.querySelectorAll(".content-section");
+  const navItems = document.querySelectorAll(".menu-item[data-section]");
 
   navItems.forEach((item) => {
     item.addEventListener("click", (e) => {
       e.preventDefault();
-
-      // Remove active class from all nav items and sections
-      navItems.forEach((nav) => nav.classList.remove("active"));
-      sections.forEach((section) => section.classList.remove("active"));
-
-      // Add active class to clicked nav item
-      item.classList.add("active");
-
-      // Show corresponding section
-      const sectionId = item.getAttribute("data-section") + "-section";
-      const targetSection = document.getElementById(sectionId);
-      if (targetSection) {
-        targetSection.classList.add("active");
+      const sectionKey = item.getAttribute("data-section");
+      showSection(sectionKey);
+      if (sectionKey === "presentations") {
+        fetchAndRenderActivePresentations();
       }
     });
   });
@@ -103,7 +91,7 @@ function displayGroups(groups) {
   // Replace empty state with groups list
   groupsSection.innerHTML = `
     <div class="section-header">
-      <h2>📊 Les Groupes</h2>
+      <h2>Les Groupes</h2>
       <p class="section-subtitle">Liste de tous les groupes (${groups.length})</p>
     </div>
     <div class="groups-grid" id="groupsGrid"></div>
@@ -179,7 +167,7 @@ function showEmptyGroupsState() {
   const groupsSection = document.getElementById("overview-section");
   groupsSection.innerHTML = `
     <div class="section-header">
-      <h2>📊 Les Groupes</h2>
+      <h2>Les Groupes</h2>
       <p class="section-subtitle">Liste de tous les groupes</p>
     </div>
     <div class="empty-state">
@@ -249,17 +237,6 @@ function initDashboard() {
 document.addEventListener("DOMContentLoaded", initDashboard);
 
 document.addEventListener("DOMContentLoaded", () => {
-  // when user clicks "Présentations" in sidebar, load list
-  const navPres = document.querySelector(
-    '.nav-item[data-section="presentations"]'
-  );
-  if (navPres) {
-    navPres.addEventListener("click", () => {
-      showSection("presentations"); // assumes you already have this helper
-      fetchAndRenderActivePresentations(); // <-- new
-    });
-  }
-
   const refreshBtn = document.getElementById("refreshActivePresBtn");
   if (refreshBtn) {
     refreshBtn.addEventListener("click", fetchAndRenderActivePresentations);
@@ -338,12 +315,16 @@ function openFeedbackModal(presentationId) {
   const modal = document.getElementById("feedbackModal");
   const textarea = document.getElementById("feedbackText");
   textarea.value = "";
-  modal.style.display = "block";
+  if (modal) {
+    modal.classList.add("open");
+  }
 }
 
 function closeFeedbackModal() {
   const modal = document.getElementById("feedbackModal");
-  modal.style.display = "none";
+  if (modal) {
+    modal.classList.remove("open");
+  }
   currentPresentationId = null;
 }
 
@@ -355,16 +336,16 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const feedbackText = document.getElementById("feedbackText").value.trim();
       if (!feedbackText) {
-        alert("Veuillez entrer un feedback.");
+        showAlert("Veuillez entrer un feedback.", 'warning');
         return;
       }
       if (!currentPresentationId) {
-        alert("Aucune présentation sélectionnée.");
+        showAlert("Aucune présentation sélectionnée.", 'warning');
         return;
       }
       const user = getCurrentUser();
       if (!user) {
-        alert("Utilisateur non authentifié.");
+        showAlert("Utilisateur non authentifié.", 'error');
         return;
       }
 
@@ -390,12 +371,12 @@ document.addEventListener("DOMContentLoaded", () => {
           );
         }
 
-        alert("Feedback ajouté avec succès.");
+        showAlert("Feedback ajouté avec succès.", 'success');
         closeFeedbackModal();
         // Optionally refresh the presentations list or update UI
         fetchAndRenderActivePresentations();
       } catch (error) {
-        alert(`Erreur: ${error.message}`);
+        showAlert(`Erreur: ${error.message}`, 'error');
       }
     });
   }
@@ -403,16 +384,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function showSection(key) {
   document
-    .querySelectorAll(".content-section")
+    .querySelectorAll('[data-dashboard="section"]')
     .forEach((s) => s.classList.remove("active"));
   const el = document.getElementById(`${key}-section`);
   if (el) el.classList.add("active");
 
   document
-    .querySelectorAll(".sidebar .nav-item")
+    .querySelectorAll(".menu-item[data-section]")
     .forEach((a) => a.classList.remove("active"));
   const nav = document.querySelector(
-    `.sidebar .nav-item[data-section="${key}"]`
+    `.menu-item[data-section="${key}"]`
   );
   if (nav) nav.classList.add("active");
 }

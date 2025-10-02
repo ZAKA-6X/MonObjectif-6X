@@ -3,48 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Dashboard</title>
+  <title>MonObjectif-6X | dashboard</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="stylesheet" href="../styles/student.css">
+  <link rel="stylesheet" href="../styles/alerts.css">
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="navbar-brand">📚 Student Dashboard</div>
-    <ul class="navbar-menu">
-      <li class="active" onclick="switchTab('presentations')">Présentations</li>
-      <li onclick="switchTab('my-group')">Mon Groupe</li>
-      <li onclick="switchTab('my-presentations')">Mes Présentations</li>
-    </ul>
-    <div class="navbar-user">
-      <div class="user-info">
-        <div class="user-name" id="userName">Chargement...</div>
-        <div class="user-role">Étudiant</div>
+  <div class="page">
+    <!-- Fixed navbar -->
+    <nav class="navbar">
+      <div class="nav-inner">
+        <a class="brand" href="#">
+          <span class="brand-badge" aria-hidden="true"></span>
+          <span>
+            <span class="brand-text">MonObjectif - 6X</span>
+            <span class="brand-sub">présentations & groupes</span>
+          </span>
+        </a>
+        
+        <ul class="navbar-menu">
+          <li class="menu-item active" onclick="switchTab('presentations')">
+            Présentations
+          </li>
+          <li class="menu-item" onclick="switchTab('my-group')">
+            Mon Groupe
+          </li>
+          <li class="menu-item" onclick="switchTab('my-presentations')">
+            Mes Présentations
+          </li>
+        </ul>
+
+        <div class="navbar-user">
+          <div class="user-info">
+            <div class="user-name" id="userName">Chargement...</div>
+            <div class="user-role">Étudiant</div>
+          </div>
+          <button class="logout-btn" onclick="logout()">Déconnexion</button>
+        </div>
       </div>
-      <button class="logout-btn" onclick="logout()">Déconnexion</button>
-    </div>
-  </nav>
+    </nav>
 
-  <!-- Main Container -->
-  <div class="container">
-    <!-- Tab 1: All Active Presentations -->
-    <div id="presentations" class="tab-content active">
-      <h2>📋 Présentations Actives</h2>
-      <div id="presentationsList" class="cards-grid"></div>
-    </div>
+    <!-- Main Container -->
+    <main class="main-container">
+      <!-- Tab 1: All Active Presentations -->
+      <section id="presentations" class="tab-content active">
+        <div class="tab-header">
+          <h2>
+            Présentations Actives
+          </h2>
+          <p class="tab-subtitle">Découvrez toutes les présentations disponibles</p>
+        </div>
+        <div id="presentationsList" class="cards-grid"></div>
+      </section>
 
-    <!-- Tab 2: My Group -->
-    <div id="my-group" class="tab-content">
-      <h2>👥 Mon Groupe</h2>
-      <div id="groupInfo"></div>
-    </div>
+      <!-- Tab 2: My Group -->
+      <section id="my-group" class="tab-content">
+        <div class="tab-header" id="groupTabHeader">
+          <h2>
+            Mon Groupe
+          </h2>
+          <p class="tab-subtitle">Gérez votre groupe et collaborez avec vos membres</p>
+        </div>
+        <div id="groupInfo"></div>
+      </section>
 
-    <!-- Tab 3: My Presentations -->
-    <div id="my-presentations" class="tab-content">
-      <h2>📁 Mes Présentations</h2>
-      <div id="myPresentationsList" class="cards-grid"></div>
-    </div>
+      <!-- Tab 3: My Presentations -->
+      <section id="my-presentations" class="tab-content">
+        <div class="tab-header">
+          <h2>
+            Mes Présentations
+          </h2>
+          <p class="tab-subtitle">Consultez l'historique de vos présentations</p>
+        </div>
+        <div id="myPresentationsList" class="cards-grid"></div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <span>MonObjectif © 2025</span>
+        <span class="footer-separator">•</span>
+        <span>Système de gestion de présentations</span>
+      </div>
+    </footer>
   </div>
 
+  <script src="../scripts/alerts.js"></script>
   <script src="../scripts/student.js"></script>
 </body>
 </html>

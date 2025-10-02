@@ -1,6 +1,7 @@
 // studentdash.js (updated)
 
 let currentUser = null;
+let currentUserGroupId = null;
 
 /* -------------------- Config -------------------- */
 const API_BASE = '/api';            // ✅ same-origin API base
@@ -24,9 +25,20 @@ function presLink(id) {
   return `${PAGES_BASE}/pres-detail.html?id=${encodeURIComponent(id)}`;
 }
 
+// Helper to get initials from name
+function getInitials(nom, prenom) {
+  const n = (nom || '').trim();
+  const p = (prenom || '').trim();
+  if (n && p) return (n[0] + p[0]).toUpperCase();
+  if (n) return n[0].toUpperCase();
+  if (p) return p[0].toUpperCase();
+  return '?';
+}
+
 /* -------------------- Initialize -------------------- */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   loadUser();
+  await fetchUserGroupId();
   fetchPresentations();
 });
 
@@ -37,13 +49,30 @@ function loadUser() {
     currentUser = JSON.parse(userData);
     const role = String(currentUser.role || '').toUpperCase();
     if (role !== 'STUDENT') {
-      alert('Accès non autorisé');
+      showAlert('Accès non autorisé', 'error');
       window.location.href = `${PAGES_BASE}/login.html`;
       return;
     }
     document.getElementById('userName').textContent = currentUser.nom || 'Utilisateur';
   } else {
     window.location.href = `${PAGES_BASE}/login.html`;
+  }
+}
+
+async function fetchUserGroupId() {
+  if (!currentUser || !currentUser.id) {
+    currentUserGroupId = null;
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/groups/my-group/${encodeURIComponent(currentUser.id)}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    currentUserGroupId = data?.group?.id || null;
+  } catch (error) {
+    console.error('Unable to resolve user group:', error);
+    currentUserGroupId = null;
   }
 }
 
@@ -69,21 +98,52 @@ function viewPresentationDetails(presentationId) {
 }
 
 /* -------------------- Renderers -------------------- */
-function renderCards(list, getStatusBadge) {
-  return list.map(p => `
-    <a class="card" href="${presLink(p.id)}" style="display:block; text-decoration:none; color:inherit;">
-      <div class="card-title">${escapeHtml(p.title || 'Sans titre')}</div>
-      <div class="card-description">${escapeHtml(p.description || 'Pas de description')}</div>
-      <div style="margin-top:1rem;">
-        ${getStatusBadge(p)}
-        ${p.point !== undefined && p.point !== null ? `<span class="points">${escapeHtml(p.point)} pts</span>` : ''}
-      </div>
-      <div class="card-meta">
-        <span>📄 ${escapeHtml(p.name_file || '—')}</span>
-        <span>📅 ${fmtDate(p.uploaded_at)}</span>
+function renderCards(list, getStatusBadge, options = {}) {
+  const { highlightOwn = true } = options;
+  return list.map(p => {
+    // Get group name from various possible properties
+    const groupName = p.group?.name || p.group_name || p.groupName || p.name || 'Non assigné';
+    const rawPresentationGroupId =
+      p.group_id ?? p.group?.id ?? p.groupId ?? null;
+    const presentationGroupId =
+      rawPresentationGroupId !== undefined && rawPresentationGroupId !== null
+        ? String(rawPresentationGroupId)
+        : null;
+    const userGroupId =
+      currentUserGroupId !== undefined && currentUserGroupId !== null
+        ? String(currentUserGroupId)
+        : null;
+    const isUserGroup =
+      highlightOwn &&
+      userGroupId &&
+      presentationGroupId === userGroupId;
+
+    const cardClass = `card${isUserGroup ? ' card-my-group' : ''}`;
+    const ownBadge = isUserGroup
+      ? '<span class="card-tag card-tag-own">Votre groupe</span>'
+      : '';
+
+    return `
+    <a class="${cardClass}" href="${presLink(p.id)}" style="display:block; text-decoration:none; color:inherit;">
+      <div class="card-content">
+        ${ownBadge}
+        <div class="card-title">${escapeHtml(p.title || 'Sans titre')}</div>
+        
+        <div class="card-info-row">
+          <span class="info-label">Groupe:</span>
+          <span class="info-value">${escapeHtml(groupName)}</span>
+        </div>
+        
+
+        
+        <div class="card-info-row">
+          <span class="card-date">📅 ${fmtDate(p.uploaded_at)}</span>
+          ${getStatusBadge(p)}
+        </div>
       </div>
     </a>
-  `).join('');
+  `;
+  }).join('');
 }
 
 /* -------------------- API: All active presentations -------------------- */
@@ -97,22 +157,26 @@ async function fetchPresentations() {
     const data = await res.json();
 
     if (!Array.isArray(data) || data.length === 0) {
-      container.innerHTML = '<div class="empty-state">📭<br>Aucune présentation active</div>';
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔭</div><div class="empty-state-title">Aucune présentation active</div><p class="empty-state-text">Les présentations apparaîtront ici une fois disponibles</p></div>';
       return;
     }
 
-    container.innerHTML = renderCards(data, () =>
-      `<span class="badge badge-success">✓ Active</span>`
+    container.innerHTML = renderCards(data, (p) =>
+      `<span class="badge ${p.active ? 'badge-active' : 'badge-pending'}">
+         ${p.active ? '✓ Active' : '⏸ Inactive'}
+       </span>`
     );
   } catch (error) {
     console.error('Error:', error);
-    container.innerHTML = '<div class="empty-state">❌ Erreur de chargement</div>';
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Erreur de chargement</div></div>';
   }
 }
 
 /* -------------------- API: My group info -------------------- */
 async function fetchMyGroup() {
   const container = document.getElementById('groupInfo');
+  const headerElement = document.getElementById('groupTabHeader');
+  
   container.innerHTML = '<div class="loading"><div class="spinner"></div>Chargement...</div>';
 
   try {
@@ -120,31 +184,60 @@ async function fetchMyGroup() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
 
+    const previousGroupId = currentUserGroupId;
+    currentUserGroupId = data?.group?.id || null;
+    if (previousGroupId !== currentUserGroupId) {
+      fetchPresentations();
+    }
+
     if (!data || !data.group) {
-      container.innerHTML = '<div class="empty-state">👥<br>Vous n\'êtes dans aucun groupe</div>';
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👥</div><div class="empty-state-title">Vous n\'êtes dans aucun groupe</div><p class="empty-state-text">Rejoignez ou créez un groupe pour collaborer</p></div>';
       return;
     }
 
+    // Update tab header with group name
+    if (headerElement) {
+      headerElement.innerHTML = `
+        <h2>
+          ${escapeHtml(data.group.name)}
+        </h2>
+        <p class="tab-subtitle">Gérez votre groupe et collaborez avec vos membres</p>
+
+      `;
+    }
+
+    // Render members in grid
+    const membersCount = (data.members || []).length;
     container.innerHTML = `
       <div class="group-info">
-        <div class="group-name">${escapeHtml(data.group.name)}</div>
-        <div>Créé le ${fmtDate(data.group.created_at)}</div>
-        <div style="margin-top: 2rem; font-size: 1.2rem; font-weight: 600;">
-          👥 Membres (${(data.members || []).length})
-        </div>
-        <div class="members-list">
-          ${(data.members || []).map(m => `
-            <div class="member-card">
-              <div class="member-name">${escapeHtml(m.nom)} ${escapeHtml(m.prenom)}</div>
-              <div class="member-email">${escapeHtml(m.role || '')}</div>
-            </div>
-          `).join('')}
+        <div class="members-section">
+          <div class="members-title">
+            Membres du groupe (${membersCount})
+          </div>
+          <div class="members-grid">
+            ${(data.members || []).map(m => {
+              const initials = getInitials(m.nom, m.prenom);
+              const isLeader = m.is_leader || m.role === 'leader';
+              return `
+                <div class="member-card">
+                  <div class="member-header">
+                    <div class="member-avatar">${initials}</div>
+                    <div class="member-details">
+                      <div class="member-name">${escapeHtml(m.nom)} ${escapeHtml(m.prenom)}</div>
+                      <div class="member-email">${escapeHtml(m.email || '')}</div>
+                    </div>
+                  </div>
+                  ${isLeader ? '<div class="member-badge">Chef de groupe</div>' : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
         </div>
       </div>
     `;
   } catch (error) {
     console.error('Error:', error);
-    container.innerHTML = '<div class="empty-state">❌ Erreur de chargement</div>';
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Erreur de chargement</div></div>';
   }
 }
 
@@ -159,23 +252,18 @@ async function fetchMyPresentations() {
     const data = await res.json();
 
     if (!Array.isArray(data) || data.length === 0) {
-      container.innerHTML = '<div class="empty-state">📁<br>Aucune présentation dans votre groupe</div>';
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-title">Aucune présentation dans votre groupe</div><p class="empty-state-text">Les présentations de votre groupe apparaîtront ici</p></div>';
       return;
     }
 
     container.innerHTML = renderCards(data, (p) =>
-      `<span class="badge ${p.active ? 'badge-success' : 'badge-warning'}">
+      `<span class="badge ${p.active ? 'badge-active' : 'badge-pending'}">
          ${p.active ? '✓ Active' : '⏸ Inactive'}
        </span>`
-      + (p.feedback
-          ? `<div style="margin-top:1rem; padding:1rem; background:#fff3cd; border-radius:8px;">
-               <strong>Feedback:</strong> ${escapeHtml(p.feedback)}
-             </div>`
-          : '')
     );
   } catch (error) {
     console.error('Error:', error);
-    container.innerHTML = '<div class="empty-state">❌ Erreur de chargement</div>';
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Erreur de chargement</div></div>';
   }
 }
 
@@ -193,7 +281,7 @@ function displayPresentations(presentations, containerId) {
     return;
   }
   container.innerHTML = renderCards(presentations, (p) =>
-    `<span class="badge ${p.active ? 'badge-success' : 'badge-inactive'}">
+    `<span class="badge ${p.active ? 'badge-active' : 'badge-pending'}">
        ${p.active ? 'Active' : 'Inactive'}
      </span>`
   );
