@@ -151,9 +151,18 @@ exports.getPresentationDetails = async (req, res) => {
       }
     }
 
+    // Hide teacher note for students outside the group
+    const sanitizedPresentation = {
+      ...presentation,
+    };
+
+    if (userType === "student_not_in_group") {
+      sanitizedPresentation.point = null;
+    }
+
     // Return presentation data with user type and permissions
     res.json({
-      presentation,
+      presentation: sanitizedPresentation,
       group: group || { name: "Groupe inconnu" },
       userType,
       permissions,

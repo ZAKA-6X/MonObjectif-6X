@@ -106,10 +106,19 @@ function displayPresentationDetails(
       })
     : "—";
 
-  document.getElementById("points").textContent =
-    presentation.point !== undefined && presentation.point !== null
-      ? `${presentation.point} / 20`
-      : "Non évalué";
+  const pointsEl = document.getElementById("points");
+  if (pointsEl) {
+    const pointsCard = pointsEl.closest(".info-card");
+    if (userType === "student_not_in_group") {
+      if (pointsCard) pointsCard.style.display = "none";
+    } else {
+      if (pointsCard) pointsCard.style.display = "";
+      pointsEl.textContent =
+        presentation.point !== undefined && presentation.point !== null
+          ? `${presentation.point} / 20`
+          : "Non évalué";
+    }
+  }
 
   document.getElementById("fileName").textContent =
     presentation.name_file || "—";
