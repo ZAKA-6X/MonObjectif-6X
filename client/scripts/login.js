@@ -1,4 +1,5 @@
 // client/scripts/login.js
+const API_BASE = window.API_BASE_URL || '/api';
 const loginForm = document.getElementById('loginForm');
 const nomInput = document.getElementById('nom');
 const passwordInput = document.getElementById('password');
@@ -85,7 +86,7 @@ loginForm.addEventListener('submit', async (e) => {
         return;
       }
 
-      const res = await fetch('/api/set-password', {
+      const res = await fetch(`${API_BASE}/set-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: pendingResetUser.id, newPassword })
@@ -114,7 +115,7 @@ loginForm.addEventListener('submit', async (e) => {
 
     showMessage('Connexion en cours...');
 
-    const res = await fetch('/api/login', {
+    const res = await fetch(`${API_BASE}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nom, password })
@@ -144,7 +145,7 @@ loginForm.addEventListener('submit', async (e) => {
     localStorage.setItem('user', JSON.stringify(out.user));
     redirectByRole(out.user);
   } catch (err) {
-    showMessage("Impossible de joindre le serveur. Vérifie que l'API est accessible sur la même origine (/api).", 'red');
+    showMessage("Impossible de joindre le serveur. Vérifie que l'API distante est accessible.", 'red');
     console.error(err);
   } finally {
     submitBtn.disabled = false;

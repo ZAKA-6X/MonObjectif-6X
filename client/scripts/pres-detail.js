@@ -1,5 +1,5 @@
 // client/scripts/pres-detail.js
-const API_URL = "/api";
+const API_URL = window.API_BASE_URL || "/api";
 let currentPresentation = null;
 
 // Get presentation ID from URL
@@ -627,7 +627,7 @@ async function uploadPresentation() {
   msg.textContent = "Téléversement en cours...";
 
   try {
-    const response = await fetch("/api/upload-ppt", {
+    const response = await fetch(`${API_URL}/upload-ppt`, {
       method: "POST",
       body: formData,
     });

@@ -1,0 +1,6 @@
+# Node
+node_modules/
+client/node_modules/
+
+# Build output
+client/dist/

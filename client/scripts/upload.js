@@ -1,4 +1,6 @@
 // upload.js
+const API_BASE = window.API_BASE_URL || "/api";
+
 document.getElementById("uploadForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -27,8 +29,8 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
   msg.textContent = "Téléversement en cours...";
 
   try {
-    // ✅ same-origin
-    const response = await fetch("/api/upload-ppt", {
+    // ✅ use configured API base
+    const response = await fetch(`${API_BASE}/upload-ppt`, {
       method: "POST",
       body: formData
     });

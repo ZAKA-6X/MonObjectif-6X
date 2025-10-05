@@ -1,5 +1,5 @@
-// API endpoint - uses same origin as frontend
-const API_BASE = '/api';
+// API endpoint resolved from shared config
+const API_BASE = window.API_BASE_URL || '/api';
 
 // Global group ID variable
 let groupId = null;

@@ -1,5 +1,5 @@
-// API endpoint - uses same origin as frontend
-const API_BASE = "/api";
+// API endpoint resolved from shared config
+const API_BASE = window.API_BASE_URL || "/api";
 
 // Get current user from localStorage
 function getCurrentUser() {
@@ -253,7 +253,7 @@ async function fetchAndRenderActivePresentations() {
 
   try {
     // 👇 use your existing endpoint for “active” presentations
-    const res = await fetch("/api/presentations/active", {
+    const res = await fetch(`${API_BASE}/presentations/active`, {
       credentials: "include",
     });
     if (!res.ok) throw new Error("Failed to fetch active presentations");
@@ -351,7 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const response = await fetch(
-          `/api/presentations/${currentPresentationId}/feedback`,
+          `${API_BASE}/presentations/${currentPresentationId}/feedback`,
           {
             method: "PUT",
             headers: {

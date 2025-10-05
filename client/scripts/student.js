@@ -4,7 +4,7 @@ let currentUser = null;
 let currentUserGroupId = null;
 
 /* -------------------- Config -------------------- */
-const API_BASE = '/api';            // ✅ same-origin API base
+const API_BASE = window.API_BASE_URL || '/api';            // ✅ resolves API base per environment
 const PAGES_BASE = '/pages';        // adjust if your pages live elsewhere
 
 /* -------------------- Helpers -------------------- */
