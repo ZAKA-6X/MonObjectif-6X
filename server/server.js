@@ -50,8 +50,9 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+const corsMiddleware = cors(corsOptions);
+app.use(corsMiddleware);
+app.options(/.*/, corsMiddleware);
 
 // Serve static files from client directory
 app.use(express.static(path.join(__dirname, '../client')));
