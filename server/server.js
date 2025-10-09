@@ -21,18 +21,26 @@ const defaultAllowedOrigins = [
   'https://monobjectif-6x.space',
 ];
 
-const allowedOrigins = new Set(
-  process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS
-        .split(',')
-        .map((origin) => origin.trim())
-        .filter(Boolean)
-    : defaultAllowedOrigins
-);
+const normalizeOrigin = (value) =>
+  typeof value === 'string' ? value.trim().replace(/\/+$/, '') : value;
+
+const parseOrigins = (raw) => {
+  if (!raw) return [];
+  return raw
+    .split(/[,\s]+/)
+    .map(normalizeOrigin)
+    .filter(Boolean);
+};
+
+const configuredOrigins = parseOrigins(process.env.CORS_ORIGINS);
+const originsToAllow =
+  configuredOrigins.length > 0 ? configuredOrigins : defaultAllowedOrigins;
+const allowedOrigins = new Set(originsToAllow.map(normalizeOrigin));
 
 const corsOptions = {
   origin(origin, callback) {
-    if (!origin || allowedOrigins.has(origin)) {
+    const requestOrigin = normalizeOrigin(origin);
+    if (!requestOrigin || allowedOrigins.has(requestOrigin)) {
       return callback(null, true);
     }
     return callback(new Error(`Origin ${origin} not allowed by CORS`));
