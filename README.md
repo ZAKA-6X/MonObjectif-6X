@@ -46,7 +46,7 @@ Les étudiants peuvent déposer leur fichier de présentation pour leur groupe, 
 - **Frontend :** HTML / CSS / JavaScript (compatible Tailwind ou Bootstrap).  
 - **Backend :** Node.js + Express (ou tout autre framework REST).  
 - **Base de données :** PostgreSQL (compatible Supabase).  
-- **Stockage :** Dossier local `/uploads` ou stockage cloud (Supabase Storage / S3).  
+- **Stockage :** Supabase Storage / S3.  
 - **Authentification :** basée sur votre système existant (session, cookie, JWT, etc.).  
 
 ---
