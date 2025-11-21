@@ -3,7 +3,6 @@
 Un module léger de **gestion des présentations** pour les établissements scolaires et universitaires.  
 Les étudiants peuvent déposer leur fichier de présentation pour leur groupe, tandis que les enseignants peuvent **activer/désactiver**, **télécharger**, **évaluer** et **donner un feedback** sur chaque présentation.
 
----
 
 ## ✨ Fonctionnalités
 
