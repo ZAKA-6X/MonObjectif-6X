@@ -78,14 +78,13 @@ body{
   transition:var(--transition);
 }
 
-.back-btn{color:var(--ink-600);}
+.back-btn{color:var(--ink-600); padding:.55rem;}
 .back-btn:hover{border-color:var(--primary); color:var(--primary-600); background:var(--primary-50);} 
 
 .logout-btn{color:var(--danger);} 
 .logout-btn:hover{border-color:var(--danger); background:rgba(239,68,68,.06);} 
 
-.back-icon{font-size:1.1rem;}
-.back-label{line-height:1;}
+/* REMOVED .back-icon AND .back-label STYLES */
 
 .brand{
   display:flex; align-items:center; gap:.6rem; user-select:none;
@@ -313,13 +312,10 @@ body{
   .back-btn{
     position:absolute;
     left:0;
-    padding:.45rem .6rem;
+    padding:.45rem;
     border-radius:999px;
     gap:0;
   }
-
-  .back-btn .back-label{display:none;}
-  .back-btn .back-icon{font-size:1.35rem; line-height:1;}
 
   .brand{margin:0 auto;}
 

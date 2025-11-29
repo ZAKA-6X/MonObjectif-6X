@@ -127,6 +127,7 @@ body{
 
 .back-btn{
   color:var(--ink-600);
+  padding:.55rem;
 }
 
 .back-btn:hover{
@@ -165,8 +166,7 @@ body{
 .alert.info{background:rgba(59,130,246,.1); border-color:rgba(59,130,246,.3); color:var(--primary-600);} 
 .alert.warning{background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.35); color:#b45309;} 
 
-.back-icon{font-size:1.1rem;}
-.back-label{line-height:1;}
+/* REMOVED .back-icon AND .back-label STYLES */
 
 /* ===========================
    Container
@@ -784,13 +784,10 @@ body{
   .back-btn{
     position:absolute;
     left:0;
-    padding:.45rem .6rem;
+    padding:.45rem;
     border-radius:999px;
     gap:0;
   }
-
-  .back-btn .back-label{display:none;}
-  .back-btn .back-icon{font-size:1.35rem; line-height:1;}
 
   .brand{
     margin:0 auto;
