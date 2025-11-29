@@ -2,172 +2,6 @@
    MonObjectif — Presentation Detail
    =========================== */
 
-/* Theme */
-:root{
-  --primary: #3b82f6;
-  --primary-600:#2563eb;
-  --primary-50:#eff6ff;
-  --accent:#22c55e;
-  --accent-hover:#16a34a;
-  --ink-900:#0b1220;
-  --ink-800:#1f2937;
-  --ink-700:#374151;
-  --ink-600:#4b5563;
-  --ink-500:#6b7280;
-  --ink-400:#9ca3af;
-  --line:#e5e7eb;
-  --surface:#ffffff;
-  --bg:#f5f7fb;
-  --danger:#ef4444;
-  --danger-hover:#dc2626;
-  --warning:#f59e0b;
-
-  --radius:12px;
-  --radius-sm:10px;
-  --shadow-sm:0 6px 18px rgba(2, 6, 23, .06);
-  --shadow-md:0 10px 30px rgba(2, 6, 23, .10);
-  --transition:all .2s ease;
-}
-
-/* Base */
-*{box-sizing:border-box; margin:0; padding:0;}
-html,body{height:100%}
-body{
-  font-family: 'Roboto','Open Sans','Lato',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  background:
-    radial-gradient(1200px 600px at 85% -100px, rgba(59,130,246,.08), transparent 60%),
-    radial-gradient(900px 500px at -10% -150px, rgba(34,197,94,.06), transparent 60%),
-    var(--bg);
-  color:var(--ink-800);
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
-}
-
-/* ===========================
-   Navbar
-   =========================== */
-.navbar{
-  position:fixed;
-  inset:0 0 auto 0;
-  height:70px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(255,255,255,.85);
-  backdrop-filter:saturate(180%) blur(12px);
-  border-bottom:1px solid rgba(229,231,235,.6);
-  z-index:100;
-  box-shadow:var(--shadow-sm);
-}
-
-.nav-inner{
-  width:min(1400px, 96%);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:1.5rem;
-}
-
-/* Brand */
-.brand{
-  display:flex;
-  align-items:center;
-  gap:.6rem;
-  user-select:none;
-  text-decoration:none;
-  color:inherit;
-}
-
-.brand-badge{
-  width:34px;
-  height:34px;
-  border-radius:10px;
-  background:conic-gradient(from 120deg, var(--primary), #60a5fa 35%, #93c5fd 65%, #e0f2fe 90%);
-  box-shadow:0 6px 16px rgba(59,130,246,.25) inset, 0 6px 16px rgba(59,130,246,.18);
-}
-
-.brand-text{
-  font-weight:800;
-  letter-spacing:.3px;
-  font-size:1.15rem;
-  background:linear-gradient(92deg, var(--primary) 0%, #60a5fa 35%, #1e40af 95%);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-
-.brand-sub{
-  display:block;
-  font-size:.72rem;
-  font-weight:600;
-  color:var(--ink-400);
-  margin-top:2px;
-}
-
-.navbar-actions{
-  display:flex;
-  align-items:center;
-  gap:1.5rem;
-}
-
-.back-btn, .logout-btn{
-  display:flex;
-  align-items:center;
-  gap:.5rem;
-  padding:.55rem 1.1rem;
-  border-radius:8px;
-  border:1px solid var(--line);
-  background:var(--surface);
-  font-size:.85rem;
-  font-weight:600;
-  cursor:pointer;
-  transition:var(--transition);
-}
-
-.back-btn{
-  color:var(--ink-600);
-  padding:.55rem;
-}
-
-.back-btn:hover{
-  border-color:var(--primary);
-  color:var(--primary-600);
-  background:var(--primary-50);
-}
-
-
-.logout-btn{
-  color:var(--danger);
-}
-
-.logout-btn:hover{
-  border-color:var(--danger);
-  background:rgba(239,68,68,.06);
-}
-
-.alert{
-  display:flex;
-  align-items:flex-start;
-  gap:.75rem;
-  padding:1rem 1.25rem;
-  border-radius:var(--radius-sm);
-  border:1px solid var(--line);
-  background:rgba(148,163,184,.12);
-  color:var(--ink-700);
-  box-shadow:var(--shadow-sm);
-  font-size:.9rem;
-}
-
-.alert strong{font-weight:700;}
-
-.alert.success{background:rgba(34,197,94,.12); border-color:rgba(34,197,94,.3); color:var(--accent);} 
-.alert.error{background:rgba(239,68,68,.1); border-color:rgba(239,68,68,.3); color:var(--danger);} 
-.alert.info{background:rgba(59,130,246,.1); border-color:rgba(59,130,246,.3); color:var(--primary-600);} 
-.alert.warning{background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.35); color:#b45309;} 
-
-/* REMOVED .back-icon AND .back-label STYLES */
-
 /* ===========================
    Container
    =========================== */
@@ -735,9 +569,6 @@ body{
 }
 
 @media (max-width: 768px){
-  .nav-inner{gap:1rem;}
-  .navbar-actions{gap:1rem;}
-  
   .container{
     padding:140px 0 80px;
   }
@@ -758,7 +589,7 @@ body{
 
 @media (max-width: 480px){
   .info-card h2{
-    font-size:1.4rem;
+    font-sze:1.4rem;
   }
   
   #descriptionDisplay{
@@ -774,28 +605,4 @@ body{
   .right-section.hide-on-narrow{
     display:none;
   }
-
-  .nav-inner{
-    width:94%;
-    position:relative;
-    justify-content:flex-end;
-  }
-
-  .back-btn{
-    position:absolute;
-    left:0;
-    padding:.45rem;
-    border-radius:999px;
-    gap:0;
-  }
-
-  .brand{
-    margin:0 auto;
-  }
-
-  .navbar-actions{
-    gap:.75rem;
-  }
-
-  .logout-btn{padding:.45rem .9rem;}
 }
