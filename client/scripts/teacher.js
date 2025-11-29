@@ -180,9 +180,11 @@ function displayGroups(groups) {
     <div class="section-header">
       <h2>Les Groupes</h2>
       <p class="section-subtitle">Liste de tous les groupes (${groups.length})</p>
+      <button id="downloadGroupsNotPassed" class="btn btn-primary">Groupes non passés</button>
     </div>
     <div class="groups-grid" id="groupsGrid"></div>
   `;
+  attachDownloadGroupsNotPassedListener();
 
   const groupsGrid = document.getElementById("groupsGrid");
 
@@ -256,6 +258,7 @@ function showEmptyGroupsState() {
     <div class="section-header">
       <h2>Les Groupes</h2>
       <p class="section-subtitle">Liste de tous les groupes</p>
+      <button id="downloadGroupsNotPassed" class="btn btn-primary">Groupes non passés</button>
     </div>
     <div class="empty-state">
       <div class="empty-icon">👥</div>
@@ -263,6 +266,7 @@ function showEmptyGroupsState() {
       <p>Les groupes créés apparaîtront ici</p>
     </div>
   `;
+  attachDownloadGroupsNotPassedListener();
 }
 
 // Show error state
@@ -273,6 +277,7 @@ function showErrorState(sectionId, message) {
       <div class="section-header">
         <h2>📊 Les Groupes</h2>
         <p class="section-subtitle">Liste de tous les groupes</p>
+        <button id="downloadGroupsNotPassed" class="btn btn-primary">Groupes non passés</button>
       </div>
       <div class="empty-state">
         <div class="empty-icon">⚠️</div>
@@ -281,6 +286,7 @@ function showErrorState(sectionId, message) {
         <button class="btn btn-primary" onclick="location.reload()">Réessayer</button>
       </div>
     `;
+    attachDownloadGroupsNotPassedListener();
   }
 }
 
@@ -349,6 +355,55 @@ async function resetStudentPassword(studentId) {
   }
 }
 
+// Download groups that have not passed
+async function downloadGroupsNotPassed() {
+  const button = document.getElementById("downloadGroupsNotPassed");
+  const originalLabel = button ? button.textContent : "Groupes non passés";
+  const resetButtonState = () => {
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalLabel;
+    }
+  };
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Téléchargement...";
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/groups/not-passed/download`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        showAlert("Aucun groupe non passé à télécharger.", "info");
+        return;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'groupes-non-passes.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    showAlert("Le fichier des groupes non passés a été téléchargé.", "success");
+  } catch (error) {
+    console.error('Error downloading groups not passed:', error);
+    showAlert('Erreur lors du téléchargement du fichier.', 'error');
+  } finally {
+    resetButtonState();
+  }
+}
+
+function attachDownloadGroupsNotPassedListener() {
+  const button = document.getElementById("downloadGroupsNotPassed");
+  if (button) {
+    button.addEventListener("click", downloadGroupsNotPassed);
+  }
+}
+
 // Initialize dashboard
 function initDashboard() {
   // Check teacher access
@@ -372,6 +427,8 @@ function initDashboard() {
   if (disableAllBtn) {
     disableAllBtn.addEventListener("click", disableAllPresentations);
   }
+
+  attachDownloadGroupsNotPassedListener();
 
   // Event listener for student actions
   const studentListContainer = document.getElementById("studentList");

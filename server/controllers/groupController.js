@@ -1,7 +1,7 @@
 const supabase = require('../configuration/supabase.js');
 
 // Get user's group with members
-exports.getMyGroup = async (req, res) => {
+const getMyGroup = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -50,7 +50,7 @@ exports.getMyGroup = async (req, res) => {
 };
 
 // Get all groups for teacher with member count
-exports.getAllGroups = async (req, res) => {
+const getAllGroups = async (req, res) => {
   try {
     // Get all groups
     const { data: groups, error: groupsError } = await supabase
@@ -80,12 +80,12 @@ exports.getAllGroups = async (req, res) => {
     res.json({ groups: groupsWithMembers });
   } catch (error) {
     console.error('Get all groups error:', error);
-    res.status(500).json({ message: 'Erreur lors de la récupération des groupes', error: error.message });
+    res.status(500).json({ message: 'Erreur lors de la récupération des groupes', error: a.message });
   }
 };
 
 // Get group by ID
-exports.getGroupById = async (req, res) => {
+const getGroupById = async (req, res) => {
   try {
     const { groupId } = req.params;
 
@@ -107,7 +107,7 @@ exports.getGroupById = async (req, res) => {
 };
 
 // Get group members by group ID
-exports.getGroupMembers = async (req, res) => {
+const getGroupMembers = async (req, res) => {
   try {
     const { groupId } = req.params;
 
@@ -137,4 +137,86 @@ exports.getGroupMembers = async (req, res) => {
     console.error('Get group members error:', error);
     res.status(500).json({ message: 'Erreur lors de la récupération des membres', error: error.message });
   }
+};
+
+const downloadGroupsNotPassed = async (req, res) => {
+  try {
+    // 1. Get all groups
+    const { data: groups, error: groupsError } = await supabase
+      .from('group')
+      .select('id, name');
+
+    if (groupsError) throw groupsError;
+
+    // 2. Get all presentations that have a point
+    const { data: presentationsWithPoints, error: presError } = await supabase
+      .from('presentations')
+      .select('group_id')
+      .not('point', 'is', null);
+
+    if (presError) throw presError;
+
+    const passedGroupIds = new Set(presentationsWithPoints.map(p => p.group_id));
+
+    // 3. Filter out groups that have passed
+    const notPassedGroups = groups.filter(g => !passedGroupIds.has(g.id));
+
+    // 4. For each not-passed group, get its members
+    const groupsWithMembers = await Promise.all(
+      notPassedGroups.map(async (group) => {
+        const { data: members, error: membersError } = await supabase
+          .from('group_members')
+          .select('users(nom, prenom)')
+          .eq('group_id', group.id);
+
+        if (membersError) {
+          console.error('Error fetching members for group', group.id, membersError);
+          return { ...group, members: [] };
+        }
+
+        return { ...group, members: members.map(m => m.users) };
+      })
+    );
+
+    // 5. Generate Excel file
+    const ExcelJS = require('exceljs');
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Groupes non passés');
+
+    worksheet.columns = [
+      { header: 'Groupe', key: 'name', width: 30 },
+      { header: 'Membres', key: 'members', width: 50 },
+    ];
+
+    groupsWithMembers.forEach(group => {
+      worksheet.addRow({
+        name: group.name,
+        members: group.members.map(m => `${m.prenom} ${m.nom}`).join(', '),
+      });
+    });
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=' + 'groupes-non-passes.xlsx'
+    );
+
+    await workbook.xlsx.write(res);
+    res.status(200).end();
+
+  } catch (error) {
+    console.error('Error downloading groups not passed:', error);
+    res.status(500).json({ message: 'Erreur lors du téléchargement du fichier', error: error.message });
+  }
+};
+
+module.exports = {
+  getMyGroup,
+  getAllGroups,
+  getGroupById,
+  getGroupMembers,
+  downloadGroupsNotPassed,
 };

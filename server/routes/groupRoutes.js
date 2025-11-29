@@ -15,4 +15,8 @@ router.get('/groups/group/:groupId', groupController.getGroupById);
 // Get group members by group ID
 router.get('/groups/members/:groupId', groupController.getGroupMembers);
 
+// Download groups that have not passed (support both legacy and new URLs)
+router.get('/groups/not-passed', groupController.downloadGroupsNotPassed);
+router.get('/groups/not-passed/download', groupController.downloadGroupsNotPassed);
+
 module.exports = router;

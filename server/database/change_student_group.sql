@@ -1,1 +1,0 @@
--- This file is not used anymore. The function is defined in supabase.sql
