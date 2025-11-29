@@ -703,6 +703,7 @@ body{
 @media (max-width: 768px){
   .nav-inner{gap:1rem;}
   .navbar-actions{gap:1rem;}
+  .brand-sub{display:none;}
   
   .container{
     padding:140px 0 80px;
