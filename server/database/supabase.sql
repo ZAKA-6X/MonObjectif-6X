@@ -61,3 +61,12 @@ CREATE TABLE public.users (
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT users_pkey PRIMARY KEY (id)
 );
+
+CREATE TABLE public.mods (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT mods_pkey PRIMARY KEY (id),
+  CONSTRAINT mods_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE,
+  CONSTRAINT mods_user_id_key UNIQUE (user_id)
+);
