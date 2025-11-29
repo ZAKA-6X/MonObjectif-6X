@@ -9,6 +9,9 @@ router.get('/presentations/active', presentationController.getActivePresentation
 // Get user's group presentations
 router.get('/presentations/my-group/:userId', presentationController.getMyGroupPresentations);
 
+// disable all presentation
+router.put('/presentations/disable-all', presentationController.disableAllPresentations);
+
 
 // ✅ NEW: Get presentations by groupId (what the frontend calls)
 router.get('/presentations/group/:groupId', presentationController.getPresentationsByGroupId);

@@ -23,6 +23,7 @@
           <ul class="navbar-menu">
             <li class="menu-item active" data-section="overview">Groupes</li>
             <li class="menu-item" data-section="presentations">Présentations</li>
+            <li class="menu-item" data-section="students">Étudiants</li>
           </ul>
           <div class="navbar-user">
             <div class="user-pill">
@@ -57,6 +58,7 @@
                 <div>
                   <h2>Présentations actives</h2>
                 </div>
+                <button id="disableAllBtn" class="btn btn-danger">Tout désactiver</button>
               </div>
 
               <!-- container that JS will fill -->
@@ -64,6 +66,24 @@
                 <div class="empty-state">
                   <h3>Aucune présentation active</h3>
                   <p>Les présentations actives apparaîtront ici</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Students Section -->
+            <section id="students-section" class="content-section" data-dashboard="section">
+              <div class="section-header">
+                <h2>Les Étudiants</h2>
+                <p class="section-subtitle">Liste de tous les étudiants</p>
+              </div>
+              <div class="search-container">
+                <input type="text" id="studentSearch" class="search-input" placeholder="Rechercher un étudiant...">
+              </div>
+              <div id="studentList" class="student-list">
+                <!-- Student items will be inserted here by JavaScript -->
+                <div class="empty-state">
+                  <h3>Aucun étudiant trouvé</h3>
+                  <p>Les étudiants apparaîtront ici.</p>
                 </div>
               </div>
             </section>
@@ -88,6 +108,30 @@
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeFeedbackModal()">Annuler</button>
                 <button type="submit" class="btn btn-primary">Soumettre</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Group Modal -->
+      <div id="changeGroupModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Changer le groupe de l'étudiant</h3>
+            <span class="close" onclick="closeChangeGroupModal()">&times;</span>
+          </div>
+          <div class="modal-body">
+            <form id="changeGroupForm">
+              <div class="form-group">
+                <label for="groupSelect">Nouveau groupe :</label>
+                <select id="groupSelect" name="group" required>
+                  <!-- Options will be populated by JavaScript -->
+                </select>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeChangeGroupModal()">Annuler</button>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
               </div>
             </form>
           </div>

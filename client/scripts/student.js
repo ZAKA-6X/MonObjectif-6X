@@ -224,7 +224,6 @@ async function fetchMyGroup() {
                     <div class="member-avatar">${initials}</div>
                     <div class="member-details">
                       <div class="member-name">${escapeHtml(m.nom)} ${escapeHtml(m.prenom)}</div>
-                      <div class="member-email">${escapeHtml(m.email || '')}</div>
                     </div>
                   </div>
                   ${isLeader ? '<div class="member-badge">Chef de groupe</div>' : ''}

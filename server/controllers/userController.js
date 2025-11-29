@@ -25,7 +25,6 @@ async function checkUser(req, res) {
       id: user.id,
       nom: user.nom,
       prenom: user.prenom,
-      email: user.email || null,
       role: user.role,
     };
 
@@ -94,7 +93,6 @@ async function setPassword(req, res) {
       id: user.id,
       nom: user.nom,
       prenom: user.prenom,
-      email: user.email || null,
       role: user.role,
     };
 
@@ -104,4 +102,77 @@ async function setPassword(req, res) {
   }
 }
 
-module.exports = { checkUser, setPassword };
+async function getAllStudents(req, res) {
+  try {
+    const { data: students, error } = await supabase
+      .from('users')
+      .select('id, nom, prenom')
+      .eq('role', 'STUDENT');
+
+    if (error) {
+      console.error('Supabase error in getAllStudents:', error);
+      return res.status(500).json({ message: 'Erreur Supabase', error: error.message });
+    }
+
+    res.json(students);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur', error: err.message });
+  }
+}
+
+async function resetStudentPassword(req, res) {
+  try {
+    const { id } = req.params;
+
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({ password: null, reset_password: '123' })
+      .eq('id', id);
+
+    if (error) {
+      console.error('resetStudentPassword error:', error);
+      return res.status(500).json({ message: error.message || 'Erreur lors de la réinitialisation' });
+    }
+
+    return res.status(200).json({ success: true, message: 'Mot de passe réinitialisé.' });
+  } catch (err) {
+    return res.status(500).json({ message: 'Erreur serveur', error: err.message });
+  }
+}
+
+async function changeStudentGroup(req, res) {
+  try {
+    const { studentId } = req.params;
+    const { groupId } = req.body;
+
+    if (!groupId) {
+      return res.status(400).json({ message: 'Group ID is required.' });
+    }
+
+    // Enforce single group per student by replacing existing membership
+    const { error: deleteError } = await supabaseAdmin
+      .from('group_members')
+      .delete()
+      .eq('user_id', studentId);
+
+    if (deleteError) {
+      console.error('changeStudentGroup delete error:', deleteError);
+      return res.status(500).json({ message: 'Error updating group (delete step)', db_error: deleteError.message });
+    }
+
+    const { error: insertError } = await supabaseAdmin
+      .from('group_members')
+      .insert([{ user_id: studentId, group_id: groupId }]);
+
+    if (insertError) {
+      console.error('changeStudentGroup insert error:', insertError);
+      return res.status(500).json({ message: 'Error updating group (insert step)', db_error: insertError.message });
+    }
+
+    return res.status(200).json({ success: true, message: 'Group changed successfully.' });
+  } catch (err) {
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+}
+
+module.exports = { checkUser, setPassword, getAllStudents, resetStudentPassword, changeStudentGroup };

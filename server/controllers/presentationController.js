@@ -102,3 +102,20 @@ exports.addAutoPresentation = async (req, res) => {
     return res.status(500).json({ message: 'Erreur lors de la création automatique', error: error.message });
   }
 };
+
+// Disable all presentations
+exports.disableAllPresentations = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('presentations')
+      .update({ active: false })
+      .eq('active', true);
+
+    if (error) throw error;
+
+    res.status(200).json({ message: 'Toutes les présentations ont été désactivées.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur', error: error.message });
+  }
+};
+

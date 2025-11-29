@@ -58,9 +58,96 @@ function initSectionNavigation() {
       if (sectionKey === "presentations") {
         fetchAndRenderActivePresentations();
       }
+      if (sectionKey === "students") {
+        loadStudents();
+      }
     });
   });
 }
+
+// Debounce function to limit the rate at which a function gets called
+function debounce(func, delay) {
+  let timeout;
+  return function(...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), delay);
+  };
+}
+
+// Load all students from the database
+async function loadStudents() {
+  try {
+    const response = await fetch(`${API_BASE}/students`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const students = await response.json();
+    displayStudents(students);
+  } catch (error) {
+    console.error("Error loading students:", error);
+    showErrorState("students-section", "Erreur lors du chargement des étudiants");
+  }
+}
+
+// Display students in the UI
+function displayStudents(students) {
+  const studentListContainer = document.getElementById("studentList");
+  const searchInput = document.getElementById("studentSearch");
+
+  if (!studentListContainer || !searchInput) return;
+
+  const renderList = (filteredStudents) => {
+    studentListContainer.innerHTML = ""; // Clear previous list
+    if (filteredStudents.length === 0) {
+      studentListContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🧑‍🎓</div>
+          <h3>Aucun étudiant ne correspond à votre recherche</h3>
+          <p>Essayez un autre terme de recherche.</p>
+        </div>
+      `;
+      return;
+    }
+
+    filteredStudents.forEach((student) => {
+      const studentItem = document.createElement("div");
+      studentItem.className = "student-item";
+      studentItem.dataset.id = student.id;
+      studentItem.innerHTML = `
+        <div class="student-details">
+          <span class="student-name">${escapeHtml(student.prenom)} ${escapeHtml(student.nom)}</span>
+        </div>
+        <div class="student-actions">
+          <button class="btn btn-secondary btn-small change-group-btn">Change group</button>
+          <button class="btn btn-danger btn-small reset-password-btn">Reset password</button>
+        </div>
+        <div class="student-reset-confirm" style="display: none;">
+            <p>Are you sure?</p>
+            <button class="btn btn-success btn-small confirm-reset-btn">Yes</button>
+            <button class="btn btn-secondary btn-small cancel-reset-btn">No</button>
+        </div>
+      `;
+      studentListContainer.appendChild(studentItem);
+    });
+  };
+
+  // Initial render
+  renderList(students);
+
+  // Search functionality
+  const handleSearch = () => {
+    const searchTerm = searchInput.value.toLowerCase();
+    const filteredStudents = students.filter(student => 
+      student.nom.toLowerCase().includes(searchTerm) ||
+      student.prenom.toLowerCase().includes(searchTerm)
+    );
+    renderList(filteredStudents);
+  };
+
+  searchInput.addEventListener("keyup", debounce(handleSearch, 300));
+}
+
 
 // Load all groups from database
 async function loadGroups() {
@@ -211,6 +298,57 @@ function loadDashboardStats() {
   if (avgRatingEl) avgRatingEl.textContent = "0.0";
 }
 
+// Disable all presentations
+async function disableAllPresentations() {
+  if (
+    !confirm("Êtes-vous sûr de vouloir désactiver toutes les présentations ?")
+  ) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/presentations/disable-all`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.error || "Erreur lors de la désactivation des présentations"
+      );
+    }
+
+    showAlert("Toutes les présentations ont été désactivées.", "success");
+    fetchAndRenderActivePresentations();
+  } catch (error) {
+    showAlert(`Erreur: ${error.message}`, "error");
+  }
+}
+
+// Reset student password
+async function resetStudentPassword(studentId) {
+  try {
+    const response = await fetch(`${API_BASE}/students/${studentId}/reset-password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Erreur lors de la réinitialisation du mot de passe');
+    }
+
+    showAlert('Mot de passe réinitialisé avec succès à "123".', 'success');
+  } catch (error) {
+    showAlert(`Erreur: ${error.message}`, 'error');
+  }
+}
+
 // Initialize dashboard
 function initDashboard() {
   // Check teacher access
@@ -229,6 +367,47 @@ function initDashboard() {
 
   // Load dashboard stats
   loadDashboardStats();
+
+  const disableAllBtn = document.getElementById("disableAllBtn");
+  if (disableAllBtn) {
+    disableAllBtn.addEventListener("click", disableAllPresentations);
+  }
+
+  // Event listener for student actions
+  const studentListContainer = document.getElementById("studentList");
+  if (studentListContainer) {
+    studentListContainer.addEventListener("click", (e) => {
+      const target = e.target;
+      const studentItem = target.closest(".student-item");
+      if (!studentItem) return;
+
+      const actionsDiv = studentItem.querySelector(".student-actions");
+      const confirmDiv = studentItem.querySelector(".student-reset-confirm");
+
+      if (target.classList.contains("reset-password-btn")) {
+        actionsDiv.style.display = "none";
+        confirmDiv.style.display = "flex";
+      }
+
+      if (target.classList.contains("cancel-reset-btn")) {
+        actionsDiv.style.display = "flex";
+        confirmDiv.style.display = "none";
+      }
+
+      if (target.classList.contains("confirm-reset-btn")) {
+        const studentId = studentItem.dataset.id;
+        resetStudentPassword(studentId).then(() => {
+            actionsDiv.style.display = "flex";
+            confirmDiv.style.display = "none";
+        });
+      }
+
+      if (target.classList.contains("change-group-btn")) {
+        const studentId = studentItem.dataset.id;
+        openChangeGroupModal(studentId);
+      }
+    });
+  }
 
   console.log("Teacher dashboard initialized");
 }
@@ -309,23 +488,49 @@ async function fetchAndRenderActivePresentations() {
 
 // Feedback modal logic
 let currentPresentationId = null;
+let currentStudentId = null;
 
-function openFeedbackModal(presentationId) {
-  currentPresentationId = presentationId;
-  const modal = document.getElementById("feedbackModal");
-  const textarea = document.getElementById("feedbackText");
-  textarea.value = "";
+function openChangeGroupModal(studentId) {
+  currentStudentId = studentId;
+  const modal = document.getElementById("changeGroupModal");
+  const select = document.getElementById("groupSelect");
+  select.innerHTML = '<option>Chargement...</option>';
+
+  // Fetch groups
+  fetch(`${API_BASE}/groups/all-group`)
+    .then(res => {
+      if (!res.ok) throw new Error('Failed to fetch groups');
+      return res.json();
+    })
+    .then(data => {
+      select.innerHTML = '';
+      if (data.groups && data.groups.length > 0) {
+        data.groups.forEach(group => {
+          const option = document.createElement('option');
+          option.value = group.id;
+          option.textContent = group.name;
+          select.appendChild(option);
+        });
+      } else {
+        select.innerHTML = '<option>Aucun groupe disponible</option>';
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      select.innerHTML = '<option>Erreur de chargement</option>';
+    });
+
   if (modal) {
     modal.classList.add("open");
   }
 }
 
-function closeFeedbackModal() {
-  const modal = document.getElementById("feedbackModal");
+function closeChangeGroupModal() {
+  const modal = document.getElementById("changeGroupModal");
   if (modal) {
     modal.classList.remove("open");
   }
-  currentPresentationId = null;
+  currentStudentId = null;
 }
 
 // Handle feedback form submission
@@ -380,7 +585,39 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  const changeGroupForm = document.getElementById('changeGroupForm');
+  if (changeGroupForm) {
+    changeGroupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const groupId = document.getElementById('groupSelect').value;
+      if (!currentStudentId || !groupId) {
+        showAlert('Veuillez sélectionner un groupe.', 'warning');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/students/${currentStudentId}/group`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ groupId }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Erreur lors du changement de groupe");
+        }
+
+        showAlert('Groupe modifié avec succès.', 'success');
+        closeChangeGroupModal();
+        loadStudents(); // Refresh student list to show new group if needed
+      } catch (error) {
+        showAlert(`Erreur: ${error.message}`, 'error');
+      }
+    });
+  }
 });
+
 
 function showSection(key) {
   document
