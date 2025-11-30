@@ -171,6 +171,31 @@ body{
   background:rgba(239,68,68,.05);
 }
 
+.non-passe-btn {
+  padding: .5rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-700);
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.non-passe-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(59, 130, 246, .05);
+}
+
+.non-passe-btn .icon {
+  display: none;
+}
+
 .alert{
   display:flex;
   align-items:flex-start;
@@ -625,18 +650,24 @@ body{
     border-top:1px solid var(--line);
   }
   
-  .user-info{
-    display:none;
+  .user-info,
+  .non-passe-btn .text {
+    display: none;
+  }
+
+  .non-passe-btn .icon {
+    display: block;
+  }
+  
+  .non-passe-btn {
+    padding: .5rem;
   }
   
   .main-container{
     padding:140px 0 80px;
   }
   
-  .cards-grid{
-    grid-template-columns:1fr;
-  }
-  
+  .cards-grid,
   .members-grid{
     grid-template-columns:1fr;
   }

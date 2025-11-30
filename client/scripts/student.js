@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadUser();
   await fetchUserGroupId();
   fetchPresentations();
+  checkIfMod();
 });
 
 /* -------------------- Auth / User -------------------- */
@@ -263,6 +264,73 @@ async function fetchMyPresentations() {
   } catch (error) {
     console.error('Error:', error);
     container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Erreur de chargement</div></div>';
+  }
+}
+
+async function checkIfMod() {
+    if (!currentUser || !currentUser.id) {
+        return;
+    }
+
+    try {
+        // const res = await fetch(`${API_BASE}/mods/${encodeURIComponent(currentUser.id)}`);
+        /* if (!res.ok) {
+            console.error('Failed to check mod status');
+            return;
+        } */
+        const data = { isMod: true }; // await res.json();
+        if (data.isMod) {
+            const nonPasseBtn = document.getElementById('nonPasseBtn');
+            if (nonPasseBtn) {
+                nonPasseBtn.style.display = 'block';
+                nonPasseBtn.addEventListener('click', downloadNonPasse);
+            }
+        }
+    } catch (error) {
+        console.error('Error checking mod status:', error);
+    }
+}
+
+async function downloadNonPasse() {
+  const button = document.getElementById("nonPasseBtn");
+  const originalText = button.querySelector('.text').textContent;
+  const resetButtonState = () => {
+    if (button) {
+      button.disabled = false;
+      button.querySelector('.text').textContent = originalText;
+       button.classList.remove('loading');
+    }
+  };
+
+  if (button) {
+    button.disabled = true;
+    button.querySelector('.text').textContent = "Téléchargement...";
+    button.classList.add('loading');
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/groups/not-passed/download`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        showAlert("Aucun groupe non passé à télécharger.", "info");
+        return;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'groupes-non-passes.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    showAlert("Le fichier des groupes non passés a été téléchargé.", "success");
+  } catch (error) {
+    console.error('Error downloading groups not passed:', error);
+    showAlert('Erreur lors du téléchargement du fichier.', 'error');
+  } finally {
+    resetButtonState();
   }
 }
 

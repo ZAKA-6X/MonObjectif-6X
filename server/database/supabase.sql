@@ -11,22 +11,17 @@ CREATE TABLE public.group_members (
   user_id uuid NOT NULL,
   group_id uuid NOT NULL,
   joined_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT group_members_pkey PRIMARY KEY (user_id),
-  CONSTRAINT group_members_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.group(id) ON DELETE CASCADE,
-  CONSTRAINT group_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE
+  CONSTRAINT group_members_pkey PRIMARY KEY (user_id, group_id),
+  CONSTRAINT group_members_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.group(id),
+  CONSTRAINT group_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
 );
-
-CREATE OR REPLACE FUNCTION change_student_group(student_id uuid, new_group_id uuid)
-RETURNS void AS $$
-BEGIN
-  -- Delete existing memberships for that user
-  DELETE FROM public.group_members WHERE user_id = student_id;
-  -- Insert the new one
-  INSERT INTO public.group_members (user_id, group_id)
-  VALUES (student_id, new_group_id);
-END;
-$$ LANGUAGE plpgsql;
-
+CREATE TABLE public.mods (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL UNIQUE,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT mods_pkey PRIMARY KEY (id),
+  CONSTRAINT mods_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
 CREATE TABLE public.presentations (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   title text NOT NULL,
@@ -60,13 +55,4 @@ CREATE TABLE public.users (
   role text NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT users_pkey PRIMARY KEY (id)
-);
-
-CREATE TABLE public.mods (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  created_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT mods_pkey PRIMARY KEY (id),
-  CONSTRAINT mods_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE,
-  CONSTRAINT mods_user_id_key UNIQUE (user_id)
 );

@@ -8,6 +8,7 @@ const uploadRoutes = require('./routes/uploadRoutes.js');
 const presentationRoutes = require('./routes/presentationRoutes.js');
 const presDetailRoutes = require('./routes/pres-detailRoutes.js'); // ← ADD THIS LINE
 const groupRoutes = require('./routes/groupRoutes.js');
+const modRoutes = require('./routes/modRoutes.js');
 
 dotenv.config();
 
@@ -63,6 +64,7 @@ app.use('/api', uploadRoutes);
 app.use('/api', presentationRoutes);
 app.use('/api', presDetailRoutes); // ← ADD THIS LINE
 app.use('/api', groupRoutes);
+app.use('/api/mods', modRoutes);
 
 // Root route - serve login page
 app.get('/', (req, res) => {
