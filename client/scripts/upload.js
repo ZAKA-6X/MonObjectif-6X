@@ -15,10 +15,10 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
 
   const file = fileInput.files[0];
   // (Optional) quick client-side guard
-  const allowed = ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
-  if (!allowed.includes(file.type) && !/\.(ppt|pptx)$/i.test(file.name)) {
+  const allowed = ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/pdf'];
+  if (!allowed.includes(file.type) && !/\.(ppt|pptx|pdf)$/i.test(file.name)) {
     msg.style.color = "red";
-    msg.textContent = "Format invalide. Choisissez un .ppt ou .pptx.";
+    msg.textContent = "Format invalide. Choisissez un .ppt, .pptx ou .pdf.";
     return;
   }
 

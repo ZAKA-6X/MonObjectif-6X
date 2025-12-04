@@ -14,9 +14,10 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     const ok = [
       'application/vnd.ms-powerpoint',
-      'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'application/pdf'
     ].includes(file.mimetype);
-    if (!ok) return cb(new Error('Seuls les fichiers PPT/PPTX sont autorisés.'));
+    if (!ok) return cb(new Error('Seuls les fichiers PPT/PPTX/PDF sont autorises.'));
     cb(null, true);
   }
 });
