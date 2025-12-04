@@ -602,11 +602,12 @@ async function uploadPresentation() {
   const allowed = [
     "application/vnd.ms-powerpoint",
     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/pdf", // Allow PDF files
   ];
 
-  if (!allowed.includes(file.type) && !/\.(ppt|pptx)$/i.test(file.name)) {
+  if (!allowed.includes(file.type) && !/\.(ppt|pptx|pdf)$/i.test(file.name)) {
     msg.style.color = "red";
-    msg.textContent = "Format invalide. Choisissez un .ppt ou .pptx.";
+    msg.textContent = "Format invalide. Choisissez un .ppt, .pptx ou .pdf.";
     return;
   }
 

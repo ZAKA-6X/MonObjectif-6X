@@ -111,17 +111,15 @@
 
           <!-- Right Section -->
           <div class="right-section">
-            <div class="group-info-section">
-              <div class="group-card">
-                <h3>Informations du groupe</h3>
-                <div class="group-name">
+            <div class="members-panel">
+              <div class="members-panel-header">
+                <div class="members-panel-title">
+                  <p class="members-label">Membres du groupe</p>
                   <h2 id="groupName"></h2>
                 </div>
-                <div class="members-section">
-                  <div id="membersList" class="members-list">
-                    <!-- Members will be populated by JavaScript -->
-                  </div>
-                </div>
+              </div>
+              <div id="membersList" class="members-grid">
+                <!-- Members will be populated by JavaScript -->
               </div>
             </div>
           </div>
@@ -197,7 +195,7 @@
           <!-- Upload Section (only for group members) -->
           <div id="uploadSection" style="display: none">
             <form id="uploadForm" class="upload-form">
-              <input type="file" id="pptFile" accept=".ppt,.pptx" required />
+              <input type="file" id="pptFile" accept=".ppt,.pptx,.pdf" required />
               <button type="submit" class="btn btn-primary">
                 Téléverser une présentation
               </button>

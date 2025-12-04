@@ -375,7 +375,7 @@ body{
   height:fit-content;
 }
 
-.group-card{
+.members-panel{
   background:var(--surface);
   padding:2rem;
   border-radius:var(--radius);
@@ -383,52 +383,49 @@ body{
   border:1px solid var(--line);
 }
 
-.group-card h3{
-  font-size:1.1rem;
+.members-panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:1rem;
+  margin-bottom:1.25rem;
+}
+
+.members-panel-title h2{
+  font-size:1.6rem;
   color:var(--ink-900);
-  margin-bottom:1.5rem;
-  font-weight:600;
-  padding-bottom:.75rem;
-  border-bottom:2px solid var(--line);
-}
-
-.group-name{
-  margin-bottom:2rem;
-}
-
-.group-name h2{
-  font-size:1.5rem;
-  color:var(--primary);
   font-weight:700;
 }
 
-.members-section h4{
-  font-size:.95rem;
-  color:var(--ink-700);
-  margin-bottom:1rem;
-  font-weight:600;
+.members-label{
+  font-size:.75rem;
+  letter-spacing:.3px;
+  text-transform:uppercase;
+  color:var(--ink-500);
+  margin-bottom:.25rem;
+  font-weight:700;
 }
 
+.members-grid,
 .members-list{
-  display:flex;
-  flex-direction:column;
-  gap:.75rem;
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+  gap:1.25rem;
 }
 
-.member-item{
-  padding:.75rem 1rem;
-  background:var(--bg);
-  border-radius:8px;
+.member-card{
   border:1px solid var(--line);
-  font-size:.9rem;
-  color:var(--ink-700);
+  border-radius:var(--radius-sm);
+  padding:1.25rem;
+  background:var(--surface);
+  box-shadow:var(--shadow-sm);
   transition:var(--transition);
 }
 
-.member-item:hover{
-  background:var(--primary-50);
-  border-color:var(--primary);
-}
+.member-card:hover{border-color:var(--primary); box-shadow:var(--shadow-md);}
+.member-header{display:flex; justify-content:space-between; align-items:center; gap:1rem;}
+.member-header h3 { text-decoration: none; }
+.member-role{font-size:.8rem; font-weight:600; color:var(--primary-600); text-transform:uppercase; letter-spacing:.4px;} 
 
 /* ===========================
    Feedback Section
